@@ -7,6 +7,7 @@ module Core
     autoload :TrackedBehavior
     autoload :BelongsToAssociationPatch
     autoload :HasOneAssociationPatch
+    autoload :Delegations
 
     included do
       ActiveRecord::Associations::BelongsToAssociation.send(:include, BelongsToAssociationPatch)
@@ -52,14 +53,26 @@ module Core
       def represented_by(name, options = {})
         has_one name, options.merge(:conditions => {:is_current => true})
         accepts_nested_attributes_for name
+        include_delegation_module_for name
       end
 
       def consists_of(*parts)
+        composed_associations.push *parts
+        include Delegations::Composition unless self < Delegations::Composition
         parts.each do |name|
           belongs_to name
           accepts_nested_attributes_for name
         end
       end
+
+      def composed_associations
+        @composed_associations ||= []
+      end
+
+      def include_delegation_module_for(association_name)
+        include Delegations.delegation_module_for(association_name)
+      end
+      private :include_delegation_module_for
     end
   end
 end
