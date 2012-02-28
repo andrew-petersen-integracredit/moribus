@@ -50,12 +50,12 @@ module Core
         include TrackedBehavior
       end
 
-      def represented_by(name)
+      def represented_by(name, options = {})
         inverse_name = self.name.underscore.to_sym
         reflection = has_one name, :inverse_of => inverse_name, :conditions => {:is_current => true}
         reflection_klass = reflection.klass
         inversed_reflection = reflection_klass.reflect_on_association(inverse_name)
-        inversed_reflection.options[:parts].each{ |part| delegate part, :"build_#{part}", :to => name }
+        inversed_reflection.options[:parts].each{ |part| delegate part, :"build_#{part}", :to => name, :allow_nil => true }
         Array(inversed_reflection.options[:provides]).each do |p|
           case p
           when Symbol then delegate p, :to => name
@@ -63,6 +63,9 @@ module Core
           end
         end
         include reflection_klass.representation_delegations
+        if options[:share]
+          before_save{ Array(options[:share]).each{ |attr| send(name).try(:"#{attr}=", send(attr)) } }
+        end
         accepts_nested_attributes_for name
         default_scope includes(name)
       end
