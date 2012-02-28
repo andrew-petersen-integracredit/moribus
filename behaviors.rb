@@ -50,29 +50,41 @@ module Core
         include TrackedBehavior
       end
 
-      def represented_by(name, options = {})
-        has_one name, options.merge(:conditions => {:is_current => true})
+      def represented_by(name)
+        inverse_name = self.name.underscore.to_sym
+        reflection = has_one name, :inverse_of => inverse_name, :conditions => {:is_current => true}
+        reflection_klass = reflection.klass
+        inversed_reflection = reflection_klass.reflect_on_association(inverse_name)
+        inversed_reflection.options[:parts].each{ |part| delegate part, :"build_#{part}", :to => name }
+        Array(inversed_reflection.options[:provides]).each do |p|
+          case p
+          when Symbol then delegate p, :to => name
+          when Regexp then reflection_klass.instance_methods.grep(p).each{ |m| delegate m, :to => name }
+          end
+        end
+        include reflection_klass.representation_delegations
         accepts_nested_attributes_for name
-        include_delegation_module_for name
+        default_scope includes(name)
       end
 
-      def consists_of(*parts)
-        composed_associations.push *parts
-        include Delegations::Composition unless self < Delegations::Composition
+      def represents(name, options = {})
+        reflection = belongs_to name, :inverse_of => self.name.underscore.to_sym
+        parts = options[:with] or raise ArgumentError.new(":with option should be provided")
+        reflection.options[:parts] = parts
+        reflection.options[:provide] = options[:provide] if options.key?(:provide)
         parts.each do |name|
           belongs_to name
           accepts_nested_attributes_for name
         end
+        default_scope includes(parts)
+        @representation_delegations = Delegations.representation_module_for(self, *parts)
+        include @representation_delegations
+        tracked
       end
 
-      def composed_associations
-        @composed_associations ||= []
+      def representation_delegations
+        @representation_delegations
       end
-
-      def include_delegation_module_for(association_name)
-        include Delegations.delegation_module_for(association_name)
-      end
-      private :include_delegation_module_for
     end
   end
 end
