@@ -71,7 +71,7 @@ module Core
         reflection = belongs_to name, :inverse_of => self.name.underscore.to_sym
         parts = options[:with] or raise ArgumentError.new(":with option should be provided")
         reflection.options[:parts] = parts
-        reflection.options[:provide] = options[:provide] if options.key?(:provide)
+        reflection.options[:provides] = options[:provides]
         parts.each do |name|
           belongs_to name
           accepts_nested_attributes_for name
