@@ -18,6 +18,7 @@ module Core
         relation = self.class.unscoped.where(attributes.except(*NON_CONTENT_COLUMNS))
         relation.first
       end
+      private :lookup_self
 
       def lookup_self_and_replace
         @updated_as_aggregated = true
@@ -25,6 +26,7 @@ module Core
           persistentify(existing)
         end
       end
+      private :lookup_self_and_replace
     end
   end
 end

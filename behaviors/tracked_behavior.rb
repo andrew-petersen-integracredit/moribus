@@ -1,29 +1,29 @@
 module Core
   module Behaviors
     module TrackedBehavior
-      def save(*)
-        run_callbacks(:save) do
-          if content_changed? && persisted?
-            stmt = current_to_false_arel_statement
-            new_recordify
-            klass = self.class
-            begin
-              klass.transaction do
-                klass.connection.update stmt if super
-              end
-            rescue Exception => e
-              pesistentify
-              raise e
-            end
-          else
-            super
+      extend ActiveSupport::Concern
+
+      included{ around_save :tracked_save_callback }
+
+      def tracked_save_callback
+        if content_changed? && persisted?
+          stmt = current_to_false_arel_statement
+          new_recordify
+          begin
+            self.class.connection.update stmt if yield
+          ensure
+            persistentify if new_record?
           end
+        else
+          yield
         end
       end
+      private :tracked_save_callback
 
       def content_changed?
         changed? && changes.keys != ['is_current']
       end
+      private :tracked_save_callback
 
       def tracked?
         true
@@ -37,6 +37,7 @@ module Core
         self.is_current = true
         stmt
       end
+      private :current_to_false_arel_statement
     end
   end
 end

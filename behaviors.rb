@@ -5,13 +5,22 @@ module Core
 
     autoload :AggregatedBehavior
     autoload :TrackedBehavior
-    autoload :BelongsToAssociationPatch
-    autoload :HasOneAssociationPatch
-    autoload :Delegations
+    autoload :Macros
+    autoload :Extensions
 
     included do
-      ActiveRecord::Associations::BelongsToAssociation.send(:include, BelongsToAssociationPatch)
-      ActiveRecord::Associations::HasOneAssociation.send(:include, HasOneAssociationPatch)
+      include Extensions
+      extend Macros
+    end
+
+    module ClassMethods
+      def aggregated
+        include AggregatedBehavior
+      end
+
+      def tracked
+        include TrackedBehavior
+      end
     end
 
     def new_recordify
@@ -39,55 +48,6 @@ module Core
 
     def tracked?
       false
-    end
-
-    module ClassMethods
-      def aggregated
-        include AggregatedBehavior
-      end
-
-      def tracked
-        include TrackedBehavior
-      end
-
-      def represented_by(name, options = {})
-        inverse_name = self.name.underscore.to_sym
-        reflection = has_one name, :inverse_of => inverse_name, :conditions => {:is_current => true}
-        reflection_klass = reflection.klass
-        inversed_reflection = reflection_klass.reflect_on_association(inverse_name)
-        inversed_reflection.options[:parts].each{ |part| delegate part, :"build_#{part}", :to => name, :allow_nil => true }
-        Array(inversed_reflection.options[:provides]).each do |p|
-          case p
-          when Symbol then delegate p, :to => name
-          when Regexp then reflection_klass.instance_methods.grep(p).each{ |m| delegate m, :to => name }
-          end
-        end
-        include reflection_klass.representation_delegations
-        if options[:share]
-          before_save{ Array(options[:share]).each{ |attr| send(name).try(:"#{attr}=", send(attr)) } }
-        end
-        accepts_nested_attributes_for name
-        default_scope includes(name)
-      end
-
-      def represents(name, options = {})
-        reflection = belongs_to name, :inverse_of => self.name.underscore.to_sym
-        parts = options[:with] or raise ArgumentError.new(":with option should be provided")
-        reflection.options[:parts] = parts
-        reflection.options[:provides] = options[:provides]
-        parts.each do |name|
-          belongs_to name
-          accepts_nested_attributes_for name
-        end
-        default_scope includes(parts)
-        @representation_delegations = Delegations.representation_module_for(self, *parts)
-        include @representation_delegations
-        tracked
-      end
-
-      def representation_delegations
-        @representation_delegations
-      end
     end
   end
 end
