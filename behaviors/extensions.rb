@@ -1,5 +1,7 @@
 module Core
   module Behaviors
+    # Hosts some functionality for extending default Rails' +has_one+ and +belongs_to+
+    # associations for means of tracked and aggregated behaviors.
     module Extensions
       extend ActiveSupport::Concern
       extend ActiveSupport::Autoload
@@ -7,12 +9,18 @@ module Core
       autoload :HasAggregatedExtension
       autoload :HasCurrentExtension
 
+      # :nodoc:
       module ClassMethods
+        # Adds special delegation for +has_aggregated+ association to Rails' +belongs_to+
+        # reflection object.
         def extend_has_aggregated_reflection(reflection)
           HasAggregatedExtension::Helper.new(self, reflection).extend
         end
+        private :extend_has_aggregated_reflection
       end
 
+      # Overrides Rails' default #association method to extend resulting +association+ objects
+      # by custom behaviors.
       def association(name)
         association = super
         reflection = self.class.reflect_on_association(name)
