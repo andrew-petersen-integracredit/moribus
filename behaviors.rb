@@ -39,8 +39,8 @@ module Core
       @new_record = true
     end
 
-    # Marks +self+ as persistent record. If other record is passed, uses it's
-    # persistence attributes (id, timestamps). If nill is passed as an argument,
+    # Marks +self+ as persistent record. If another record is passed, uses its
+    # persistence attributes (id, timestamps). If nil is passed as an argument,
     # marks +self+ as persisted record and sets +id+ to memorized value.
     def persistentify(existing = nil)
       if existing
@@ -55,14 +55,14 @@ module Core
       true
     end
 
-    # Helper method that is used by has_aggregated (in fact, belongs_to) association
-    # during autosave.
+    # Helper method used by has_aggregated (in fact, belongs_to)
+    # association during autosave.
     def updated_as_aggregated?
       !!@updated_as_aggregated
     end
 
-    # Helper method indicating the record is not tracked. Overridden by TrackedBehavior
-    # module.
+    # Helper method indicating the record is not tracked. Overridden by
+    # TrackedBehavior module.
     def tracked?
       false
     end

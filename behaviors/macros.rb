@@ -1,14 +1,18 @@
 module Core
   module Behaviors
-    # Declares a set of helper methods for more efficient use of aggregated and tracked models.
+    # Declares a set of helper methods for more efficient use of aggregated
+    # and tracked models.
     module Macros
-      # Specifies a set of attributes to be 'shared' with associated object. Defines a before_save
-      # callback that sets values of designated attributes in associated object as the are in self.
-      # Purpose: Customer has customer_status, and it is defined via state_machine. This sets a
-      # special behavior and set of scopes that rely on Customer's 'customer_status' column. To keep
-      # tracks of status changes, CustomerInfo tracked model, associated with a customer also has
-      # 'customer_status' column. That will allow to track status changes via tracked behavior of
-      # CustomerInfo.
+      # Specify a set of attributes to be 'shared' with the associated
+      # object. Define a before_save callback that sets values of designated
+      # attributes in the associated object as they are in self.
+      #
+      # Purpose: the Customer has a customer_status, and it is defined via
+      # state_machine. This sets a special behavior and set of scopes that rely
+      # on the Customer's 'customer_status' column. To keep track of status
+      # changes, the CustomerInfo tracked model, associated with the customer
+      # also has a 'customer_status' column. That will allow status changes
+      # to be tracked via the tracked behavior of CustomerInfo.
       def share(*args)
         options = args.extract_options!
         association_name = options[:with] or raise ArgumentError.new(":with option should be provided")
@@ -22,12 +26,16 @@ module Core
       end
       private :share
 
-      # For each of passed arguments, which may be both method or association names, defines delegation
-      # to specified association. If responds to effective reader, delegate to it.
-      # If subject of delegation is method name, delegates both reader and writer.
-      # If subject of delegation is association name, and the association was defined via +has_aggregated+
-      # helper method, will include association's delegation module, effectively using attribute readers
-      # and writes of associated object. See example bellow for more expressive explanation:
+      # For each of the passed arguments, which may either be method or
+      # association names, define its delegation to the specified association.
+      # If it responds to the effective reader, delegate to it.
+      # If the subject of delegation is a method name, delegate both reader and writer.
+      # If the subject of delegation is an association name, and the association
+      # was defined via the +has_aggregated+ helper method, include the
+      # association's delegation module, effectively using attribute readers,
+      # and write the associated object. See the example below for a more
+      # expressive explanation:
+      #
       #   class CustomerAttributes < ActiveRecord::Base
       #     # has date_of_birth and is_military attributes
       #     aggregated
@@ -82,8 +90,9 @@ module Core
         end
       end
 
-      # Defines +has_one+ association with `{:is_current => true}` value for :conditions clause.
-      # Defines acceptance of nested attributes for association and effective reader.
+      # Define a +has_one+ association with `{:is_current => true}` value for
+      # :conditions clause. Also define acceptance of nested attributes for
+      # association and effective reader.
       def has_one_current(name, options = {})
         reflection = has_one name, options.merge(:conditions => {:is_current => true})
         reflection.options[:is_current] = true
@@ -108,14 +117,16 @@ module Core
       private :has_aggregated
 
       # Declares a reader that will build associated object if it does not exist.
-      # We can actually extend association's readers like
+      # We can actually extend an association's readers like:
+      #
       #   def reader
       #     super || build
       #   end
-      # but this corrupts has_one association's create_other method (and I failed to
-      # dig out why --a.kuzko). Also, this will result in failing
-      # `it { should validate_presence_of :other }` specs, since auto-building will
-      # prevent from `nil` values that are used by specs.
+      #
+      # but this corrupts the has_one association's create_other method
+      # (and I failed to dig out why --a.kuzko). Also, this will result in
+      # failing `it { should validate_presence_of :other }` specs, since
+      # auto-building will prevent `nil` values that are used by specs.
       def define_effective_reader_for(name)
         class_eval <<-eoruby, __FILE__, __LINE__
           def effective_#{name}; #{name} || build_#{name}; end
