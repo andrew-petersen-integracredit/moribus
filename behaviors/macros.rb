@@ -94,10 +94,11 @@ module Core
       # :conditions clause. Also define acceptance of nested attributes for
       # association and effective reader.
       def has_one_current(name, options = {})
-        reflection = has_one name, options.merge(:conditions => {:is_current => true})
+        reflection = has_one name, options.merge(:conditions => {:is_current => true}).reverse_merge(:order => 'id DESC')
         reflection.options[:is_current] = true
         accepts_nested_attributes_for name
         define_effective_reader_for name
+        alias_association :"current_#{name}", name
         reflection
       end
       private :has_one_current

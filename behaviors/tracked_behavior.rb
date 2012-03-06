@@ -35,7 +35,7 @@ module Core
       def content_changed?
         changed? && changes.keys != ['is_current']
       end
-      private :tracked_save_callback
+      private :content_changed?
 
       # Return true, indicating whether this record has tracked behaviors.
       def tracked?

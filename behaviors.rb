@@ -34,7 +34,7 @@ module Core
     # Marks +self+ as a new record. Sets +id+ attribute to nil, but memorizes
     # the old value in case of exception.
     def new_recordify
-      @_id_before_new_recodify = id
+      @_id_before_new_recordify = id
       self.id = nil
       @new_record = true
     end
