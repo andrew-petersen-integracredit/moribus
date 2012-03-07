@@ -19,22 +19,22 @@ module Core
     # :nodoc:
     module ClassMethods
       # Adds aggregated behavior to a model.
-      def aggregated
+      def acts_as_aggregated
         include AggregatedBehavior
       end
-      private :aggregated
+      private :acts_as_aggregated
 
       # Adds tracked behavior to a model
-      def tracked
+      def acts_as_tracked
         include TrackedBehavior
       end
-      private :tracked
+      private :acts_as_tracked
     end
 
     # Marks +self+ as a new record. Sets +id+ attribute to nil, but memorizes
     # the old value in case of exception.
-    def new_recordify
-      @_id_before_new_recordify = id
+   def to_new_record!
+      @_id_before_to_new_record = id
       self.id = nil
       @new_record = true
     end
@@ -42,14 +42,14 @@ module Core
     # Marks +self+ as persistent record. If another record is passed, uses its
     # persistence attributes (id, timestamps). If nil is passed as an argument,
     # marks +self+ as persisted record and sets +id+ to memorized value.
-    def persistentify(existing = nil)
+    def to_persistent!(existing = nil)
       if existing
         self.id         = existing.id
         self.created_at = existing.created_at if respond_to?(:created_at)
         self.updated_at = existing.updated_at if respond_to?(:updated_at)
         @changed_attributes = {}
       else
-        self.id = @_id_before_new_recordify
+        self.id = @_id_before_to_new_record
       end
       @new_record = false
       true

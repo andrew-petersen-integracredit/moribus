@@ -21,7 +21,7 @@ module Core
         return (lookup_self_and_replace or super) if new_record?
 
         if changed?
-          new_recordify
+          to_new_record!
           lookup_self_and_replace or return super
         end
         true
@@ -40,7 +40,7 @@ module Core
       def lookup_self_and_replace
         @updated_as_aggregated = true
         if (existing = lookup_self).present?
-          persistentify(existing)
+          to_persistent!(existing)
         end
       end
       private :lookup_self_and_replace
