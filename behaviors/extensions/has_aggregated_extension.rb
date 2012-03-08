@@ -9,7 +9,7 @@ module Core
         # lookup, indicating that the association owner's foreign key should
         # be updated also.
         def updated?
-          @updated || load_target.updated_as_aggregated?
+          @updated || (target && target.updated_as_aggregated?)
         end
 
         # This helper class is used to effectively extend +has_aggregated+

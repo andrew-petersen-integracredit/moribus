@@ -37,11 +37,6 @@ module Core
       end
       private :content_changed?
 
-      # Return true, indicating whether this record has tracked behaviors.
-      def tracked?
-        true
-      end
-
       # Generates arel statement to be used to update 'is_current' state of record to false. Performs
       # the very same actions AR does for record update, but uses only single 'is_current' column.
       #

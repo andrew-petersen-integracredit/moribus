@@ -38,12 +38,12 @@ module Core
       #
       #   class CustomerAttributes < ActiveRecord::Base
       #     # has date_of_birth and is_military attributes
-      #     aggregated
+      #     acts_as_aggregated
       #   end
       #   
       #   class PersonName < ActiveRecord::Base
       #     # has first_name and last_name attributes
-      #     aggregated
+      #     acts_as_aggregated
       #   end
       #   
       #   class CustomerInfo < ActiveRecord::Base
@@ -51,7 +51,7 @@ module Core
       #   
       #     has_aggregated :customer_attributes
       #     has_aggregated :person_name
-      #     tracked
+      #     acts_as_tracked
       #   end
       #   
       #   class Customer < ActiveRecord::Base
