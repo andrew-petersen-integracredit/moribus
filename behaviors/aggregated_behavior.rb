@@ -18,13 +18,13 @@ module Core
       # by the #save method, wrongly indicating the result of saving.
       def save(*)
         @updated_as_aggregated = false
-        return (lookup_self_and_replace or super) if new_record?
+        run_callbacks(:save) do
+          return (lookup_self_and_replace or super) if new_record?
 
         if changed?
           to_new_record!
           lookup_self_and_replace or return super
         end
-        true
       end
 
       # Use attributes of +self+ to find an existing record in the table with
