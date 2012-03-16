@@ -153,6 +153,10 @@ describe Core::Behaviors do
       @info = @customer.spec_customer_info
     end
 
+    it "should have delegated column information" do
+      @customer.column_for_attribute(:first_name).should_not be_nil
+    end
+
     it "should delegate methods to aggregated parts" do
       @info.should respond_to(:first_name)
       @info.should respond_to(:spec_suffix)
