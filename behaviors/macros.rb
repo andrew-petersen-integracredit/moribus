@@ -75,11 +75,13 @@ module Core
       def delegate_associated(*args)
         options = args.extract_options!
         name = options[:to] or raise ArgumentError.new(":to option should be provided")
+        include Extensions::DelegateAssociated unless self < Extensions::DelegateAssociated
         effective_name = "effective_#{name}".in?(instance_methods(false)) ? "effective_#{name}" : name
         klass = reflect_on_association(name).klass
         args.each do |association_name|
           delegate(association_name, :to => effective_name)
           if (association_reflection = klass.reflect_on_association(association_name)).present?
+            self.classes_delegating_to += [association_reflection.klass]
             if association_reflection.respond_to?(:delegated_attribute_methods)
               delegate("effective_#{association_name}", :to => effective_name)
               include association_reflection.delegated_attribute_methods

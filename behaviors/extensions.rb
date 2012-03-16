@@ -8,6 +8,7 @@ module Core
 
       autoload :HasAggregatedExtension
       autoload :HasCurrentExtension
+      autoload :DelegateAssociated
 
       # :nodoc:
       module ClassMethods
