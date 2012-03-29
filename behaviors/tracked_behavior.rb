@@ -21,7 +21,9 @@ module Core
           stmt = current_to_false_sql_statement
           to_new_record!
           begin
-            self.class.connection.update stmt if yield
+            # SQL UPDATE statement is executed in first place to prevent
+            # crashing on uniqueness constraints with 'is_current' condition.
+            yield if self.class.connection.update stmt
           ensure
             to_persistent! if new_record?
           end
