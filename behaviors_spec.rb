@@ -35,13 +35,21 @@ describe Core::Behaviors do
       acts_as_tracked
     end
 
-    class SpecCustomer < SpecModel(:id => :integer, :spec_status_id => :integer)
+    class SpecCustomer < SpecModel(:spec_status_id => :integer)
       has_one_current :spec_customer_info, :inverse_of => :spec_customer
       has_enumerated :spec_status, :default => 'inactive'
 
       delegate_associated :spec_person_name, :custom_field, :to => :spec_customer_info
 
       share :spec_status_id, :with => :spec_customer_info
+    end
+
+    class SpecCustomerEmail < SpecModel(:spec_customer_id => :integer, :email => :string, :is_current => :boolean, :status => :string)
+      connection.add_index table_name, [:email], :unique => true, :where => 'is_current'
+
+      belongs_to :spec_customer
+
+      acts_as_tracked
     end
   end
 
@@ -125,6 +133,11 @@ describe Core::Behaviors do
       @customer.spec_customer_info = new_info
       new_info.spec_customer_id.should == @customer.id
       @info.is_current.should be_false
+    end
+
+    it "should not crash on superseding with 'is_current' conditional constraint" do
+      email = SpecCustomerEmail.create(:spec_customer => @customer, :email => 'foo@bar.com', :status => 'unverified', :is_current => true)
+      expect{ email.update_attributes(:status => 'verified') }.not_to raise_error
     end
 
     describe 'with Aggregated' do
