@@ -18,12 +18,11 @@ module Core
       # state with its old id.
       def tracked_save_callback
         if content_changed? && persisted?
-          stmt = current_to_false_sql_statement
           to_new_record!
           begin
             # SQL UPDATE statement is executed in first place to prevent
             # crashing on uniqueness constraints with 'is_current' condition.
-            yield if self.class.connection.update stmt
+            yield if update_current
           ensure
             to_persistent! if new_record?
           end
@@ -39,8 +38,19 @@ module Core
       end
       private :content_changed?
 
-      # Generates arel statement to be used to update 'is_current' state of record to false. Performs
-      # the very same actions AR does for record update, but uses only single 'is_current' column.
+      def update_current
+        statement = current_to_false_sql_statement
+        affected_rows = self.class.connection.update statement
+        unless affected_rows == 1
+          raise ActiveRecord::StaleObjectError, "Attempted to update a stale object: #{self.class.name}"
+        end
+        true
+      end
+      private :update_current
+
+      # Generate an arel statement to update the 'is_current' state of the
+      # record to false. And perform the very same actions AR does for record
+      # update, but using only a single 'is_current' column.
       #
       # Note: this is replaced by #current_to_false_sql_statement for performance reasons.
       # def current_to_false_arel_statement
@@ -56,7 +66,13 @@ module Core
       # Generates SQL statement to be used to update 'is_current' state of record to false.
       def current_to_false_sql_statement
         klass = self.class
-        "UPDATE #{klass.quoted_table_name} SET \"is_current\" = #{klass.quote_value(false)} WHERE #{klass.quoted_primary_key} = #{klass.quote_value(id)}"
+        lock_col = klass.locking_column
+        lock_value = respond_to?(lock_col) && send(lock_col).to_i
+        "UPDATE #{klass.quoted_table_name} SET \"is_current\" = #{klass.quote_value(false)} ".tap do |sql|
+          sql << ", #{klass.quoted_locking_column} = #{klass.quote_value(lock_value + 1)} " if lock_value
+          sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_id_before_to_new_record)} "
+          sql << "AND #{klass.quoted_locking_column} = #{klass.quote_value(lock_value)}" if lock_value
+        end
       end
       private :current_to_false_sql_statement
     end
