@@ -151,6 +151,11 @@ describe Core::Behaviors do
 
         expect{ @info2.update_attributes(:spec_person_name_id => 4) }.to raise_error(ActiveRecord::StaleObjectError)
       end
+
+      it "should not fail if no locking_column present" do
+        email = SpecCustomerEmail.create(:spec_customer_id => 1, :email => 'foo@bar.com')
+        expect{ email.update_attributes(:email => 'foo2@bar.com') }.not_to raise_error
+      end
     end
 
     describe 'with Aggregated' do
@@ -168,11 +173,6 @@ describe Core::Behaviors do
         @info.is_current.should == true
         SpecCustomerInfo.find(old_id).is_current.should be_false
       end
-
-      it "should not fail if no locking_column present" do
-        email = SpecCustomerEmail.create(:spec_customer_id => 1, :email => 'foo@bar.com')
-        expect{ email.update_attributes(:email => 'foo@baz.com') }.not_to raise_error
-      end
     end
   end
 
@@ -186,6 +186,15 @@ describe Core::Behaviors do
 
     it "should have delegated column information" do
       @customer.column_for_attribute(:first_name).should_not be_nil
+    end
+
+    it "should not delegate special methods" do
+      @customer.should_not respond_to(:reset_first_name)
+      @customer.should_not respond_to(:first_name_was)
+      @customer.should_not respond_to(:first_name_before_type_cast)
+      @customer.should_not respond_to(:first_name_will_change!)
+      @customer.should_not respond_to(:first_name_changed?)
+      @customer.should_not respond_to(:lock_version)
     end
 
     it "should delegate methods to aggregated parts" do
