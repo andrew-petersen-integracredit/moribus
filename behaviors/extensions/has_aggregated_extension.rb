@@ -19,7 +19,7 @@ module Core
         class Helper
           # Among all attribute methods, we're interested only in reader and
           # writers - discard the rest
-          EXCLUDE_METHODS_REGEXP = /^_|\?$|^reset|_cast$|_was$|_change!?$/
+          EXCLUDE_METHODS_REGEXP = /^_|\?$|^reset|_cast$|_was$|_change!?$|lock_version/
 
           attr_reader :model, :reflection
 
