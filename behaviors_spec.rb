@@ -25,7 +25,7 @@ describe Core::Behaviors do
       validates_presence_of :first_name, :last_name
     end
 
-    class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :is_current => :boolean)
+    class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :is_current => :boolean, :lock_version => :integer)
       attr :custom_field
 
       belongs_to :spec_customer, :inverse_of => :spec_customer_info, :touch => true
@@ -140,6 +140,19 @@ describe Core::Behaviors do
       expect{ email.update_attributes(:status => 'verified') }.not_to raise_error
     end
 
+    describe "Optimistic Locking" do
+      before do
+        @info1 = @customer.reload.spec_customer_info
+        @info2 = @customer.reload.spec_customer_info
+      end
+
+      it "should raise stale object error" do
+        @info1.update_attributes(:spec_person_name_id => 3)
+
+        expect{ @info2.update_attributes(:spec_person_name_id => 4) }.to raise_error(ActiveRecord::StaleObjectError)
+      end
+    end
+
     describe 'with Aggregated' do
       before do
         @info.spec_person_name = SpecPersonName.create(:first_name => 'John', :last_name => 'Smith')
@@ -154,6 +167,11 @@ describe Core::Behaviors do
         @info.id.should_not == old_id
         @info.is_current.should == true
         SpecCustomerInfo.find(old_id).is_current.should be_false
+      end
+
+      it "should not fail if no locking_column present" do
+        email = SpecCustomerEmail.create(:spec_customer_id => 1, :email => 'foo@bar.com')
+        expect{ email.update_attributes(:email => 'foo@baz.com') }.not_to raise_error
       end
     end
   end
