@@ -38,6 +38,9 @@ module Core
       end
       private :content_changed?
 
+      # Executes SQL UPDATE statement that sets value of 'is_current' attribute to false for a
+      # record that is subject to update. If the record has locking column, will support
+      # optimistic locking behavior.
       def update_current
         statement = current_to_false_sql_statement
         affected_rows = self.class.connection.update statement
