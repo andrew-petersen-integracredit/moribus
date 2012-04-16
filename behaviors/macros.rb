@@ -119,6 +119,39 @@ module Core
       end
       private :has_aggregated
 
+      # Records +attribute+ change date in +change_date+ field. For example:
+      #
+      # class Foo
+      #   ...
+      #   track_attr_change_at :bar, :bar_changed_at
+      #   ...
+      # end
+      #
+      # When a Foo object gets a new :bar attribute value the current time will be set in :bar_changed_at.
+      def tracks_attr_change_date(attribute, change_date)
+        define_method("#{attribute}_change_date_tracker") {
+          self.send("#{change_date}=", Time.zone.now) if changed.include? attribute.to_s
+        }
+
+        before_save "track_#{attribute}_change_date"
+      end
+      private :tracks_attr_change_date
+
+      # Records status +attribute+ change date in +change_date+ (default - :status_changed_at) field.
+      # Is a shortcut to +track_attr_change_date+ method. For example:
+      #
+      # class ApplicationInfo
+      #   ...
+      #   track_status_changed_at :application_status_id
+      #   ...
+      # end
+      #
+      # When :application_status_id gets a new value the current time will be set in :status_changed_at.
+      def tracks_status_change_date(attribute, change_date = :status_changed_at)
+        tracks_attr_change_date(attribute, :status_changed_at)
+      end
+      private :tracks_status_change_date
+
       # Declares a reader that will build associated object if it does not exist.
       # We can actually extend an association's readers like:
       #
