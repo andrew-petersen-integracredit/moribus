@@ -119,7 +119,7 @@ module Core
       end
       private :has_aggregated
 
-      # Records +attribute+ change date in +change_date+ field. For example:
+      # Record +attribute+ change date in +change_date+ field. For example:
       #
       # class Foo
       #   ...
@@ -127,7 +127,8 @@ module Core
       #   ...
       # end
       #
-      # When a Foo object gets a new :bar attribute value the current time will be set in :bar_changed_at.
+      # When a Foo object gets a new :bar attribute value the current time will
+      # be set in :bar_changed_at.
       def tracks_attr_change_date(attribute, change_date)
         define_method("track_#{attribute}_change_date") {
           if changed?
@@ -141,8 +142,9 @@ module Core
       end
       private :tracks_attr_change_date
 
-      # Records status +attribute+ change date in +change_date+ (default - :status_changed_at) field.
-      # Is a shortcut to +track_attr_change_date+ method. For example:
+      # Record status +attribute+ change date in +change_date+
+      # (default - :status_changed_at) field.
+      # It's a shortcut to +track_attr_change_date+ method. For example:
       #
       # class ApplicationInfo
       #   ...
@@ -150,20 +152,21 @@ module Core
       #   ...
       # end
       #
-      # When :application_status_id gets a new value the current time will be set in :status_changed_at.
+      # When :application_status_id gets a new value the current time will be
+      # set in :status_changed_at.
       def tracks_status_change_date(attribute, change_date = :status_changed_at)
         tracks_attr_change_date(attribute, change_date)
       end
       private :tracks_status_change_date
 
-      # Declares a reader that will build associated object if it does not exist.
+      # Declare a reader that will build associated object if it does not exist.
       # We can actually extend an association's readers like:
       #
       #   def reader
       #     super || build
       #   end
       #
-      # but this corrupts the has_one association's create_other method
+      # But this corrupts the has_one association's create_other method
       # (and I failed to dig out why --a.kuzko). Also, this will result in
       # failing `it { should validate_presence_of :other }` specs, since
       # auto-building will prevent `nil` values that are used by specs.
