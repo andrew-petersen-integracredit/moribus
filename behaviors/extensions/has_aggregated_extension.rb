@@ -37,7 +37,7 @@ module Core
           end
 
           # Define the delegation module for a reflection, available through
-          # #delegated_attribute_methods method.
+          # #delegated_attribute_methods* method.
           def define_delegation_module(reflection)
             def reflection.delegated_attribute_methods
               @delegated_attribute_methods ||= Module.new
