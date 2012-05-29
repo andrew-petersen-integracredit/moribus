@@ -176,6 +176,20 @@ module Core
         eoruby
       end
       private :define_effective_reader_for
+
+      # Creates a writer method to remove unwanted characters from string input
+      # (or anything that supports gsub). You can provide custom filters.
+      #
+      # @param [Symbol] attribute
+      # @param [Regexp] filter
+      def filters_input_on(attribute, filter = /[^\d\.]/)
+        class_eval <<-eoruby, __FILE__, __LINE__
+          def #{attribute}=(value)
+            super value.respond_to?(:gsub) ? value.gsub(Regexp.new('#{filter.to_s}'), '') : value
+          end
+        eoruby
+      end
+      private :filters_input_on
     end
   end
 end
