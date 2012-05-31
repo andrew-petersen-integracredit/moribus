@@ -177,8 +177,9 @@ module Core
       end
       private :define_effective_reader_for
 
-      # Creates a writer method to remove unwanted characters from string input
+      # Create a writer method to remove unwanted characters from string input
       # (or anything that supports gsub). You can provide custom filters.
+      # The filter defaults to a numeric filter (including the decimal point).
       #
       # @param [Symbol] attribute
       # @param [Regexp] filter
