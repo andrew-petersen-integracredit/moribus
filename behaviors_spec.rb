@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Core::Behaviors do
-  before :all do
+  before do
     class SpecStatus < SpecModel(:name => :string, :description => :string)
       acts_as_enumerated
 
@@ -53,7 +53,7 @@ describe Core::Behaviors do
     end
   end
 
-  after :all do
+  after do
     SpecModel.cleanup!
   end
 
