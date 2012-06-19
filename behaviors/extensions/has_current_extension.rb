@@ -7,7 +7,11 @@ module Core
         # Sets 'is_current' flag of overridden record to false, instead
         # of deleting it or setting foreign key to nil.
         def remove_target!(*)
-          target.update_attribute(:is_current, false)
+          if target.new_record?
+            target.is_current = false
+          else
+            target.update_attribute(:is_current, false)
+          end
         end
       end
     end
