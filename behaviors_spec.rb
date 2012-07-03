@@ -23,6 +23,11 @@ describe Core::Behaviors do
       has_enumerated :spec_suffix, :default => ''
 
       validates_presence_of :first_name, :last_name
+
+      # custom writer that additionally strips first name
+      def first_name=(value)
+        self[:first_name] = value.strip
+      end
     end
 
     class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :is_current => :boolean, :lock_version => :integer)
@@ -81,7 +86,7 @@ describe Core::Behaviors do
 
     it "should not duplicate records" do
       expect {
-        SpecPersonName.create :first_name => 'John', :last_name => 'Smith'
+        SpecPersonName.create :first_name => ' John ', :last_name => 'Smith'
       }.not_to change(SpecPersonName, :count)
     end
 
@@ -180,7 +185,7 @@ describe Core::Behaviors do
     before do
       @customer = SpecCustomer.create(
         :spec_customer_info_attributes => {
-          :spec_person_name_attributes => {:first_name => 'John', :last_name => 'Smith'} } )
+          :spec_person_name_attributes => {:first_name => ' John ', :last_name => 'Smith'} } )
       @info = @customer.spec_customer_info
     end
 
@@ -199,12 +204,14 @@ describe Core::Behaviors do
 
     it "should delegate methods to aggregated parts" do
       @info.should respond_to(:first_name)
+      @info.should respond_to(:first_name=)
       @info.should respond_to(:spec_suffix)
       @info.last_name.should == 'Smith'
     end
 
     it "should delegate methods to representation" do
       @customer.should respond_to(:first_name)
+      @customer.should respond_to(:first_name=)
       @customer.should respond_to(:spec_suffix)
       @customer.last_name.should == 'Smith'
       @customer.should respond_to(:custom_field)
