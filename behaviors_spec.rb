@@ -64,13 +64,17 @@ describe Core::Behaviors do
 
     it "should revert changes if exception is raised" do
       old_id = @info.id
+      old_updated_at = @info.updated_at
+      old_created_at = @info.created_at
       suppress(Exception) do
         expect {
           @info.update_attributes :spec_customer_id => nil, :spec_person_name_id => 2
         }.not_to change(SpecCustomerInfo, :count)
-        @info.new_record?.should be_false
-        @info.id.should == old_id
       end
+      @info.new_record?.should be_false
+      @info.id.should == old_id
+      @info.updated_at.should == old_updated_at
+      @info.created_at.should == old_created_at
     end
   end
 
