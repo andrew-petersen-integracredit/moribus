@@ -25,7 +25,7 @@ describe Core::Behaviors do
       validates_presence_of :first_name, :last_name
     end
 
-    class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :is_current => :boolean, :lock_version => :integer)
+    class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :is_current => :boolean, :lock_version => :integer, :created_at => :datetime, :updated_at => :datetime)
       attr :custom_field
 
       belongs_to :spec_customer, :inverse_of => :spec_customer_info, :touch => true
@@ -138,6 +138,26 @@ describe Core::Behaviors do
     it "should not crash on superseding with 'is_current' conditional constraint" do
       email = SpecCustomerEmail.create(:spec_customer => @customer, :email => 'foo@bar.com', :status => 'unverified', :is_current => true)
       expect{ email.update_attributes(:status => 'verified') }.not_to raise_error
+    end
+
+    describe 'updated_at and created_at' do
+      let(:first_time)  { Time.zone.parse('2012-07-16 00:00:00') }
+      let(:second_time) { Time.zone.parse('2012-07-17 08:10:15') }
+
+      before { Timecop.freeze(first_time) }
+      after  { Timecop.return             }
+
+      it "should be updated on change" do
+        info = @customer.create_spec_customer_info :spec_person_name_id => 1
+        info.updated_at.should == first_time
+        info.created_at.should == first_time
+
+        Timecop.freeze(second_time)
+        info.spec_person_name_id = 2
+        info.save!
+        info.updated_at.should == second_time
+        info.created_at.should == second_time
+      end
     end
 
     describe "Optimistic Locking" do
