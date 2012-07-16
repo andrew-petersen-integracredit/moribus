@@ -36,6 +36,8 @@ module Core
    def to_new_record!
       @_id_before_to_new_record = id
       self.id = nil
+      self.updated_at = nil
+      self.created_at = nil
       @new_record = true
     end
 
