@@ -73,7 +73,7 @@ module Core
         lock_value = respond_to?(lock_col) && send(lock_col).to_i
         "UPDATE #{klass.quoted_table_name} SET \"is_current\" = #{klass.quote_value(false)} ".tap do |sql|
           sql << ", #{klass.quoted_locking_column} = #{klass.quote_value(lock_value + 1)} " if lock_value
-          sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_id_before_to_new_record)} "
+          sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_before_to_new_record_values[:id])} "
           sql << "AND #{klass.quoted_locking_column} = #{klass.quote_value(lock_value)}" if lock_value
         end
       end

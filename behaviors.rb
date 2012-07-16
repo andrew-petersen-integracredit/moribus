@@ -33,11 +33,9 @@ module Core
 
     # Marks +self+ as a new record. Sets +id+ attribute to nil, but memorizes
     # the old value in case of exception.
-   def to_new_record!
-      @_id_before_to_new_record = id
-      self.id = nil
-      self.updated_at = nil if respond_to?(:updated_at=)
-      self.created_at = nil if respond_to?(:created_at=)
+    def to_new_record!
+      store_before_to_new_record_values
+      reset_persistence_values
       @new_record = true
     end
 
@@ -51,7 +49,7 @@ module Core
         self.updated_at = existing.updated_at if respond_to?(:updated_at)
         @changed_attributes = {}
       else
-        self.id = @_id_before_to_new_record
+        restore_before_to_new_record_values
       end
       @new_record = false
       true
@@ -63,10 +61,33 @@ module Core
       !!@updated_as_aggregated
     end
 
-    # Helper method indicating the record is not tracked. Overridden by
-    # TrackedBehavior module.
-    def tracked?
-      false
+    # Save persistence values of id, updated_at and created_at to instance
+    # variable to have an ability to set them back if object fails to
+    # be saved.
+    def store_before_to_new_record_values
+      values = {:id => id}
+      values[:updated_at] = updated_at if respond_to?(:updated_at)
+      values[:created_at] = created_at if respond_to?(:created_at)
+      @_before_to_new_record_values = values
     end
+    private :store_before_to_new_record_values
+
+    # Set persistence values of id, updated_at and created_at back.
+    def restore_before_to_new_record_values
+      values = @_before_to_new_record_values
+      self.id = values[:id]
+      self.created_at = values[:created_at] if respond_to?(:updated_at=)
+      self.updated_at = values[:updated_at] if respond_to?(:updated_at=)
+    end
+    private :restore_before_to_new_record_values
+
+    # Set id, updated_at and created_at to nil in order to
+    # update them when new record is created.
+    def reset_persistence_values
+      self.id = nil
+      self.updated_at = nil if respond_to?(:updated_at=)
+      self.created_at = nil if respond_to?(:created_at=)
+    end
+    private :reset_persistence_values
   end
 end
