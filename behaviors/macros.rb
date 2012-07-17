@@ -185,12 +185,28 @@ module Core
       #
       # @param [Symbol] attribute
       # @param [Regexp] filter
-      def filters_input_on(attribute, filter = /[^\d\.]/)
-        class_eval <<-eoruby, __FILE__, __LINE__
-          def #{attribute}=(value)
-            super value.respond_to?(:gsub) ? value.gsub(Regexp.new('#{filter.to_s}'), '') : value
-          end
-        eoruby
+      def filters_input_on(*args)
+        options = args.extract_options!
+
+        filter_name = options.fetch(:filter, :whitespace)
+        filter = {
+          :whitespace => /^[ \t]+|[ \t]+$/,
+          :alpha      => /[^\d\.]/
+        }[filter_name]
+
+        args.each do |attribute|
+          class_eval <<-eoruby, __FILE__, __LINE__
+            def #{attribute}=(value)
+              result = value.respond_to?(:gsub) ? value.gsub(Regexp.new('#{filter.to_s}'), '') : value
+              if defined?(super)
+                super(result)
+              else
+                instance_variable_set(:@#{attribute}, result) # Required for non column attributes
+                write_attribute(:#{attribute}, result)
+              end
+            end
+          eoruby
+        end
       end
       private :filters_input_on
     end
