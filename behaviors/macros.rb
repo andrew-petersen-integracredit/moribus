@@ -181,17 +181,17 @@ module Core
 
       # Create a writer method to remove unwanted characters from string input
       # (or anything that supports gsub). You can provide custom filters.
-      # The filter defaults to a numeric filter (including the decimal point).
+      # The filter defaults to a whitespace filter
       #
-      # @param [Symbol] attribute
-      # @param [Regexp] filter
+      # @example
+      #   filters_input_on :method_1, :method_2, :filter => :whitespace
       def filters_input_on(*args)
         options = args.extract_options!
 
         filter_name = options.fetch(:filter, :whitespace)
         filter = {
-          :whitespace => /^[ \t]+|[ \t]+$/,
-          :alpha      => /[^\d\.]/
+          :whitespace => /^[ \s]+|[ \s]+$/,
+          :alpha      => /[^\d^\.]/
         }[filter_name]
 
         args.each do |attribute|
