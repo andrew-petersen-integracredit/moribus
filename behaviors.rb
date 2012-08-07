@@ -7,6 +7,7 @@ module Core
     extend ActiveSupport::Autoload
 
     autoload :AggregatedBehavior
+    autoload :AggregatedCacheBehavior
     autoload :TrackedBehavior
     autoload :Macros
     autoload :Extensions
@@ -19,8 +20,13 @@ module Core
     # :nodoc:
     module ClassMethods
       # Adds aggregated behavior to a model.
-      def acts_as_aggregated
+      def acts_as_aggregated(options = {})
+        options.assert_valid_keys(:cache_by)
         include AggregatedBehavior
+        if options[:cache_by].present?
+          @aggregated_caching_column = options[:cache_by]
+          include AggregatedCacheBehavior
+        end
       end
       private :acts_as_aggregated
 
