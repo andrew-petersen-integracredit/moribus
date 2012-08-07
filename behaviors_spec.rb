@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Core::Behaviors do
-  before do
+  before :all do
     class SpecStatus < SpecModel(:name => :string, :description => :string)
       acts_as_enumerated
 
@@ -28,6 +28,10 @@ describe Core::Behaviors do
       def first_name=(value)
         self[:first_name] = value.strip
       end
+    end
+
+    class SpecCustomerFeature < SpecModel(:feature_name => :string)
+      acts_as_aggregated :cache_by => :feature_name
     end
 
     class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :is_current => :boolean, :lock_version => :integer, :created_at => :datetime, :updated_at => :datetime)
@@ -58,7 +62,7 @@ describe Core::Behaviors do
     end
   end
 
-  after do
+  after :all do
     SpecModel.cleanup!
   end
 
@@ -84,6 +88,24 @@ describe Core::Behaviors do
   end
 
   describe 'Aggregated' do
+    context "definition" do
+      it "should raise error on unknown option" do
+        expect{
+          Class.new(ActiveRecord::Base).class_eval do
+            acts_as_aggregated :invalid_key => :error
+          end
+        }.to raise_error(ArgumentError)
+      end
+
+      it "should raise error when including AggregatedCacheBehavior without AggregatedBehavior" do
+        expect{
+          Class.new(ActiveRecord::Base).class_eval do
+            include Core::Behaviors::AggregatedCacheBehavior
+          end
+        }.to raise_error(Core::Behaviors::AggregatedCacheBehavior::NotAggregatedError)
+      end
+    end
+
     before do
       @existing = SpecPersonName.create! :first_name => 'John', :last_name => 'Smith'
     end
@@ -110,6 +132,33 @@ describe Core::Behaviors do
       name = SpecPersonName.create :first_name => 'Alice', :last_name => 'Smith'
       name.update_attributes :first_name => 'John'
       name.id.should == @existing.id
+    end
+
+    context "with caching" do
+      before do
+        @existing = SpecCustomerFeature.create(:feature_name => 'Pays')
+        SpecCustomerFeature.clear_cache
+      end
+
+      it "should lookup existing value and add it to the cache" do
+        feature = SpecCustomerFeature.new :feature_name => @existing.feature_name
+        expect{ feature.save }.to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
+        feature.id.should == @existing.id
+      end
+
+      it "should add freshly-created record to cache" do
+        expect{ SpecCustomerFeature.create(:feature_name => 'Fraud') }.to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
+      end
+
+      it "should freeze cached object" do
+        feature = SpecCustomerFeature.create(:feature_name => 'Cancelled')
+        SpecCustomerFeature.aggregated_records_cache[feature.feature_name].should be_frozen
+      end
+
+      it "should cache clone of record, not record itself" do
+        feature = SpecCustomerFeature.create(:feature_name => 'Returned')
+        SpecCustomerFeature.aggregated_records_cache[feature.feature_name].object_id.should_not == feature.object_id
+      end
     end
   end
 
