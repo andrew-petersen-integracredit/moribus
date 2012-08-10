@@ -40,34 +40,34 @@ module Core
       #     # has date_of_birth and is_military attributes
       #     acts_as_aggregated
       #   end
-      #   
+      #
       #   class PersonName < ActiveRecord::Base
       #     # has first_name and last_name attributes
       #     acts_as_aggregated
       #   end
-      #   
+      #
       #   class CustomerInfo < ActiveRecord::Base
       #     belongs_to :customer, :inverse_of => :customer_info
-      #   
+      #
       #     has_aggregated :customer_attributes
       #     has_aggregated :person_name
       #     acts_as_tracked
       #   end
-      #   
+      #
       #   class Customer < ActiveRecord::Base
       #     has_one_current :customer_info, :inverse_of => :customer
-      #   
+      #
       #     delegate_associated :customer_attributes, :person_name, :to => :customer_info
       #   end
-      #   
+      #
       #   customer = Customer.new
       #   info = customer.effective_customer_info
-      #   
+      #
       #   # note here we're skipping info.person_name building for readers and writers.
       #   info.first_name # => nil
       #   info.first_name = 'John'
       #   info.date_of_birth = Date.today
-      #   
+      #
       #   customer.first_name # => 'John'
       #   customer.is_military = true
       #   customer.is_military == info.is_military # => true
@@ -180,33 +180,62 @@ module Core
       private :define_effective_reader_for
 
       # Create a writer method to remove unwanted characters from string input
-      # (or anything that supports gsub). You can provide custom filters.
-      # The filter defaults to a whitespace filter
+      # You can provide custom filters.
+      # The filter defaults to Rails String.squish.
+      # Allowed filters:
+      # - value method, like String.strip
+      # - custom regular expression, make sure it has type Regexp
+      # - custom lambda filter
       #
       # @example
-      #   filters_input_on :method_1, :method_2, :filter => :whitespace
+      #   filters_input_on :method_1 # Assumes you are using String.squish
+      #   filters_input_on :method_1, :method_2, :filter => :alpha
+      #   filters_input_on :method_1, :filter => :strip # Eliminate heading and trailing spaces
+      #   filters_input_on :method_1, :filter => lambda { |value| value.customized }
+      #
+      # @param [Symbol, ...] one or more writer methods names
+      # @param [Symbol, Regexp, Proc] filter optional, defaults to rails' String.squish
+      #
+      # @return [nil]
       def filters_input_on(*args)
         options = args.extract_options!
 
-        filter_name = options.fetch(:filter, :whitespace)
+        filter_name = options.fetch(:filter, :squish)
         filter = {
-          :whitespace => /^[ \s]+|[ \s]+$/,
           :alpha      => /[^\d^\.]/
-        }[filter_name]
+        }[filter_name] || filter_name
+
+        unless [Symbol, Regexp, Proc].include?(filter.class)
+          raise ArgumentError, "Do not know how to handle filter `#{filter.inspect}`"
+        end
 
         args.each do |attribute|
-          class_eval <<-eoruby, __FILE__, __LINE__
-            def #{attribute}=(value)
-              result = value.respond_to?(:gsub) ? value.gsub(Regexp.new('#{filter.to_s}'), '') : value
+          class_eval do
+
+            define_method("#{attribute}=") do |value|
+              result =
+                case filter
+                when Symbol
+                  value.respond_to?(filter) ? value.send(filter) : value
+                when Regexp
+                  value.respond_to?(:gsub) ? value.gsub(filter, '') : value
+                when Proc
+                  filter.call(value)
+                end
+
               if defined?(super)
                 super(result)
               else
-                instance_variable_set(:@#{attribute}, result) # Required for non column attributes
-                write_attribute(:#{attribute}, result)
+                # Required for non column attributes
+                instance_variable_set("@#{attribute}".to_sym, result)
+                write_attribute(attribute.to_sym, result)
               end
             end
-          eoruby
+
+          end
         end
+
+        nil
       end
       private :filters_input_on
     end
