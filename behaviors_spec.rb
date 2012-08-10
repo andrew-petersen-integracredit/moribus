@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+# Core::Behaviors::Macros.filters_input_on is tested in
+# spec/lib/core/behaviors/macros_spec.rb
 describe Core::Behaviors do
   before :all do
     class SpecStatus < SpecModel(:name => :string, :description => :string)
