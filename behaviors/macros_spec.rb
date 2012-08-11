@@ -7,18 +7,6 @@ describe Core::Behaviors::Macros do
 
   describe 'filters_input_on' do
     before do
-      class SpecFilterByDefault < SpecModel(:name => :string)
-        filters_input_on :name
-      end
-
-      class SpecFilterByMethod < SpecModel(:name => :string)
-        filters_input_on :name, :filter => :strip
-      end
-
-      class SpecFilterByLambda < SpecModel(:name => :string)
-        filters_input_on :name, :filter => lambda { |value| value.squish }
-      end
-
       @initial_value = <<-eostring
         My uncle - high  ideals inspire him;\n\n
         but   when past joking he fell sick,
@@ -33,6 +21,12 @@ describe Core::Behaviors::Macros do
 
 
     describe 'DefaultFilter' do
+      before do
+        class SpecFilterByDefault < SpecModel(:name => :string)
+          filters_input_on :name
+        end
+      end
+
       let(:model) { SpecFilterByDefault.create }
 
       it 'should sanitize' do
@@ -42,6 +36,12 @@ describe Core::Behaviors::Macros do
     end
 
     describe 'MethodFilter' do
+      before do
+        class SpecFilterByMethod < SpecModel(:name => :string)
+          filters_input_on :name, :filter => :strip
+        end
+      end
+
       let(:model) { SpecFilterByMethod.create }
 
       it 'should sanitize' do
@@ -56,6 +56,12 @@ describe Core::Behaviors::Macros do
     end
 
     describe 'LambdaFilter' do
+      before do
+        class SpecFilterByLambda < SpecModel(:name => :string)
+          filters_input_on :name, :filter => lambda { |value| value.squish }
+        end
+      end
+
       let(:model) { SpecFilterByLambda.create }
 
       it 'should sanitize' do
@@ -77,6 +83,36 @@ describe Core::Behaviors::Macros do
           end
 
         end.to raise_error(ArgumentError, 'Do not know how to handle filter `1..5`')
+      end
+    end
+
+    describe 'RegexpFilter' do
+      before do
+        class SpecFilterByRegexp < SpecModel(:name => :string)
+          filters_input_on :name, :filter => /\d+/
+        end
+      end
+
+      let(:model) { SpecFilterByRegexp.create }
+
+      it 'should sanitize' do
+        model.name = '0abc123def456'
+        model.name.should == 'abcdef'
+      end
+    end
+
+    describe 'AlphaFilter' do
+      before do
+        class SpecFilterByAlpha < SpecModel(:name => :string)
+          filters_input_on :name, :filter => :alpha
+        end
+      end
+
+      let(:model) { SpecFilterByAlpha.create }
+
+      it 'should sanitize' do
+        model.name = '0abc123def456'
+        model.name.should == '0123456'
       end
     end
   end
