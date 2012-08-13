@@ -179,7 +179,8 @@ module Core
       end
       private :define_effective_reader_for
 
-      # Create a writer method to remove unwanted characters from string input.
+      # Creates a writer method to remove unwanted characters from string input.
+      # This method is intended to be used in models declarations.
       #
       # @overload filters_input_on(methods, filter_options)
       #   You can provide custom filters or use one of predefined Regexp filter.
@@ -197,6 +198,8 @@ module Core
       #
       #   @return [nil]
       #
+      #   @raise [ArgumentError] in case of invalid filter is given
+      #
       #   @example
       #     filters_input_on :method_1, :method_2, :filter => :alpha
       #     filters_input_on :method_1, :filter => :strip # Eliminate heading and trailing spaces
@@ -208,6 +211,8 @@ module Core
       #   @param [Symbol, ...] methods one of more writer methods names
       #
       #   @return [nil]
+      #
+      #   @raise [ArgumentError] in case of invalid filter is given
       #
       #   @example
       #     filters_input_on :method_1 # Assumes you are using String.squish
@@ -225,34 +230,48 @@ module Core
         end
 
         args.each do |attribute|
-          class_eval do
-
-            define_method("#{attribute}=") do |value|
-              result =
-                case filter
-                when Symbol
-                  value.respond_to?(filter) ? value.send(filter) : value
-                when Regexp
-                  value.respond_to?(:gsub) ? value.gsub(filter, '') : value
-                when Proc
-                  filter.call(value)
-                end
-
-              if defined?(super)
-                super(result)
-              else
-                # Required for non column attributes
-                instance_variable_set("@#{attribute}".to_sym, result)
-                write_attribute(attribute.to_sym, result)
-              end
-            end
-
-          end
+          define_filtered_attr_writer(attribute, filter)
         end
 
         nil
       end
       private :filters_input_on
+
+      # Generates writer method which could be used by filters_input_on to
+      #   declare attribute writer.
+      # This method does not intended to be used in class declarations.
+      #
+      # @param [Symbol, String] attribute name of attribute which a writter will
+      #   be defined for.
+      #   It has to be given without ending =, that's not writer name.
+      # @param [Symbol, Regexp, Proc] filter filter which will be applied to
+      #   attribute value at the time of assignment
+      #
+      # @return [nil]
+      def define_filtered_attr_writer(attribute, filter)
+        define_method("#{attribute}=") do |value|
+          result =
+            case filter
+            when Symbol
+              value.respond_to?(filter) ? value.send(filter) : value
+            when Regexp
+              value.respond_to?(:gsub) ? value.gsub(filter, '') : value
+            when Proc
+              filter.call(value)
+            end
+
+          if defined?(super)
+            super(result)
+          else
+            # Required for non column attributes
+            instance_variable_set("@#{attribute}".to_sym, result)
+            write_attribute(attribute.to_sym, result)
+          end
+
+          nil
+        end
+      end
+      private :define_filtered_attr_writer
     end
   end
 end
