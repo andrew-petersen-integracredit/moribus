@@ -179,31 +179,46 @@ module Core
       end
       private :define_effective_reader_for
 
-      # Create a writer method to remove unwanted characters from string input
-      # You can provide custom filters.
-      # The filter defaults to Rails String.squish.
-      # Allowed filters:
-      # - value method, like String.strip
-      # - custom regular expression, make sure it has type Regexp
-      # - custom lambda filter
+      # Create a writer method to remove unwanted characters from string input.
       #
-      # @example
-      #   filters_input_on :method_1 # Assumes you are using String.squish
-      #   filters_input_on :method_1, :method_2, :filter => :alpha
-      #   filters_input_on :method_1, :filter => :strip # Eliminate heading and trailing spaces
-      #   filters_input_on :method_1, :filter => lambda { |value| value.customized }
+      # @overload filters_input_on(methods, filter_options)
+      #   You can provide custom filters or use one of predefined Regexp filter.
+      #   Allowed filters:
+      #   - value method, like String.strip
+      #   - custom regular expression, but make sure it has type Regexp
+      #   - predefined regular expression
+      #   - custom lambda
+      #   Available predefined Regexp filters:
+      #   - :alpha # eliminates non all non digit characters, except \(back slash) and .(dot)
       #
-      # @param [Symbol, ...] one or more writer methods names
-      # @param [Symbol, Regexp, Proc] filter optional, defaults to rails' String.squish
+      #   @param [Symbol, ...] methods one or more writer methods names
+      #   @param [Hash] filter_options
+      #   @option filter_options [Symbol, Regexp, Proc] :filter
       #
-      # @return [nil]
+      #   @return [nil]
+      #
+      #   @example
+      #     filters_input_on :method_1, :method_2, :filter => :alpha
+      #     filters_input_on :method_1, :filter => :strip # Eliminate heading and trailing spaces
+      #     filters_input_on :method_1, :filter => /[\d]/ # Eliminate all digits
+      #     filters_input_on :method_1, :filter => lambda { |value| value.customized }
+      #
+      # @overload filters_input_on(methods)
+      #   You can use default filter method String.squish from ActiveSupport.
+      #   @param [Symbol, ...] methods one of more writer methods names
+      #
+      #   @return [nil]
+      #
+      #   @example
+      #     filters_input_on :method_1 # Assumes you are using String.squish
       def filters_input_on(*args)
         options = args.extract_options!
 
-        filter_name = options.fetch(:filter, :squish)
-        filter = {
+        predefined_filters = {
           :alpha      => /[^\d^\.]/
-        }[filter_name] || filter_name
+        }
+        filter_name = options.fetch(:filter, :squish)
+        filter = predefined_filters[filter_name] || filter_name
 
         unless [Symbol, Regexp, Proc].include?(filter.class)
           raise ArgumentError, "Do not know how to handle filter `#{filter.inspect}`"
