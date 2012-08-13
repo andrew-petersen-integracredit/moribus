@@ -15,12 +15,9 @@ describe Core::Behaviors::Macros do
         'My uncle - high ideals inspire him; but when past joking he fell sick,'
     end
 
-    after do
-      SpecModel.cleanup!
-    end
+    after { SpecModel.cleanup! }
 
-
-    describe 'DefaultFilter' do
+    context 'default filter' do
       before do
         class SpecFilterByDefault < SpecModel(:name => :string)
           filters_input_on :name
@@ -35,7 +32,7 @@ describe Core::Behaviors::Macros do
       end
     end
 
-    describe 'MethodFilter' do
+    context 'method filter' do
       before do
         class SpecFilterByMethod < SpecModel(:name => :string)
           filters_input_on :name, :filter => :strip
@@ -55,7 +52,7 @@ describe Core::Behaviors::Macros do
       end
     end
 
-    describe 'LambdaFilter' do
+    context 'lambda filter' do
       before do
         class SpecFilterByLambda < SpecModel(:name => :string)
           filters_input_on :name, :filter => lambda { |value| value.squish }
@@ -75,7 +72,7 @@ describe Core::Behaviors::Macros do
       end
     end
 
-    describe 'InvalidFilter' do
+    context 'invalid filter' do
       it 'should raise ArgumentError("Do not know how to handle filter `<invalid filter info>`")' do
         expect do
           class SpecFilterByInvalid < SpecModel(:name => :string)
@@ -86,7 +83,7 @@ describe Core::Behaviors::Macros do
       end
     end
 
-    describe 'RegexpFilter' do
+    context 'regexp filter' do
       before do
         class SpecFilterByRegexp < SpecModel(:name => :string)
           filters_input_on :name, :filter => /\d+/
@@ -101,7 +98,7 @@ describe Core::Behaviors::Macros do
       end
     end
 
-    describe 'AlphaFilter' do
+    context 'alpha filter' do
       before do
         class SpecFilterByAlpha < SpecModel(:name => :string)
           filters_input_on :name, :filter => :alpha
