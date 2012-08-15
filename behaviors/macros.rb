@@ -246,8 +246,6 @@ module Core
       #   It has to be given without ending =, that's not writer name.
       # @param [Symbol, Regexp, Proc] filter filter which will be applied to
       #   attribute value at the time of assignment
-      #
-      # @return [nil]
       def define_filtered_attr_writer(attribute, filter)
         define_method("#{attribute}=") do |value|
           result =
@@ -267,8 +265,6 @@ module Core
             instance_variable_set("@#{attribute}".to_sym, result)
             write_attribute(attribute.to_sym, result)
           end
-
-          nil
         end
       end
       private :define_filtered_attr_writer
