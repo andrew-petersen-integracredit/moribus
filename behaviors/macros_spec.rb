@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 
-# Some of the Core::Behaviors::Macros methods tested in
-# spec/lib/core/behaviors_spec.rb
+# Some of the Core::Behaviors::Macros methods are tested in
+# spec/lib/core/behaviors_spec.rb.
 describe Core::Behaviors::Macros do
 
   describe 'filters_input_on' do
@@ -42,8 +42,8 @@ describe Core::Behaviors::Macros do
       let(:model) { SpecFilterByMethod.create }
 
       it 'should sanitize' do
-        model.name = "\t\n here  is sripped  \nvalue   "
-        model.name.should == "here  is sripped  \nvalue"
+        model.name = "\t\n here  is stripped  \nvalue   "
+        model.name.should == "here  is stripped  \nvalue"
       end
 
       it 'should not fail if method could not be called on given value' do
