@@ -180,7 +180,7 @@ module Core
       private :define_effective_reader_for
 
       # Creates a writer method to remove unwanted characters from string input.
-      # This method is intended to be used in models declarations.
+      # This method is intended to be used in model declarations.
       #
       # @overload filters_input_on(methods, filter_options)
       #   You can provide custom filters or use one of predefined Regexp filter.
@@ -190,7 +190,7 @@ module Core
       #   - predefined regular expression
       #   - custom lambda
       #   Available predefined Regexp filters:
-      #   - :alpha # eliminates non all non digit characters, except \(back slash) and .(dot)
+      #   - :alpha # eliminates all non-digit characters, except \(back slash) and .(dot)
       #
       #   @param [Symbol, ...] methods one or more writer methods names
       #   @param [Hash] filter_options
@@ -237,9 +237,9 @@ module Core
       end
       private :filters_input_on
 
-      # Generates writer method which could be used by filters_input_on to
-      #   declare attribute writer.
-      # This method does not intended to be used in class declarations.
+      # Generates a writer method used by filters_input_on to declare
+      # an attribute writer.
+      # This method is not intended to be used in class declarations.
       #
       # @param [Symbol, String] attribute name of attribute which a writter will
       #   be defined for.
@@ -263,7 +263,7 @@ module Core
           if defined?(super)
             super(result)
           else
-            # Required for non column attributes
+            # Required for non-column attributes:
             instance_variable_set("@#{attribute}".to_sym, result)
             write_attribute(attribute.to_sym, result)
           end
