@@ -256,6 +256,7 @@ module Core
               value.respond_to?(:gsub) ? value.gsub(filter, '') : value
             when Proc
               filter.call(value)
+            else # nil
             end
 
           if defined?(super)
