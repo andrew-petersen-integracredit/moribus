@@ -220,7 +220,7 @@ module Core
         options = args.extract_options!
 
         predefined_filters = {
-          :alpha      => /[^\d^\.]/
+          :alpha      => /[^\d.]/
         }
         filter_name = options.fetch(:filter, :squish)
         filter = predefined_filters[filter_name] || filter_name
