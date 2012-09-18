@@ -27,13 +27,19 @@ module Core
         end
       end
 
-      # Use attributes of +self+ to find an existing record in the table with
-      # the same attributes.
+      # Use +lookup_relation+ to get the very first existing record that
+      # corresponds to +self+.
       def lookup_self
-        relation = self.class.unscoped.where(attributes.except(*NON_CONTENT_COLUMNS))
-        relation.first
+        lookup_relation.first
       end
       private :lookup_self
+
+      # Use attributes of +self+ to generate relation that corresponds to
+      # existing record in the table with the same attributes.
+      def lookup_relation
+        self.class.unscoped.where(attributes.except(*NON_CONTENT_COLUMNS))
+      end
+      private :lookup_relation
 
       # If #lookup_self successfully returns a record, it 'replaces' self by it
       # (uses its id, created_at, updated_at values).
