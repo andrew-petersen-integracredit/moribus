@@ -34,15 +34,15 @@ module Core
       end
       private :lookup_self
 
-      # Use attributes of +self+ to generate relation that corresponds to
+      # Use attributes of +self+ to generate a relation that corresponds to
       # existing record in the table with the same attributes.
       def lookup_relation
         self.class.unscoped.where(attributes.except(*NON_CONTENT_COLUMNS))
       end
       private :lookup_relation
 
-      # If #lookup_self successfully returns a record, it 'replaces' self by it
-      # (uses its id, created_at, updated_at values).
+      # If #lookup_self successfully returns a record, 'replace' self by it
+      # (using its id, created_at, updated_at values).
       def lookup_self_and_replace
         @updated_as_aggregated = true
         if (existing = lookup_self).present?
