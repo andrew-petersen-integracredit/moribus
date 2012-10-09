@@ -36,12 +36,12 @@ module Core
       end
       private :acts_as_tracked
 
-      # Return +true+ if self was declared as +acts_as_aggregated+
+      # Return +true+ if self was declared as +acts_as_aggregated+.
       def acts_as_aggregated?
         self < AggregatedBehavior
       end
 
-      # Return +true+ if self was declared as +acts_as_tracked+
+      # Return +true+ if self was declared as +acts_as_tracked+.
       def acts_as_tracked?
         self < TrackedBehavior
       end
