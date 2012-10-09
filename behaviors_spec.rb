@@ -91,7 +91,7 @@ describe Core::Behaviors do
 
   describe 'Aggregated' do
     context "definition" do
-      it "should raise error on unknown option" do
+      it "should raise an error on an unknown option" do
         expect{
           Class.new(ActiveRecord::Base).class_eval do
             acts_as_aggregated :invalid_key => :error
@@ -99,7 +99,7 @@ describe Core::Behaviors do
         }.to raise_error(ArgumentError)
       end
 
-      it "should raise error when including AggregatedCacheBehavior without AggregatedBehavior" do
+      it "should raise an error when including AggregatedCacheBehavior without AggregatedBehavior" do
         expect{
           Class.new(ActiveRecord::Base).class_eval do
             include Core::Behaviors::AggregatedCacheBehavior
@@ -142,22 +142,22 @@ describe Core::Behaviors do
         SpecCustomerFeature.clear_cache
       end
 
-      it "should lookup existing value and add it to the cache" do
+      it "should lookup the existing value and add it to the cache" do
         feature = SpecCustomerFeature.new :feature_name => @existing.feature_name
         expect{ feature.save }.to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
         feature.id.should == @existing.id
       end
 
-      it "should add freshly-created record to cache" do
+      it "should add the freshly-created record to the cache" do
         expect{ SpecCustomerFeature.create(:feature_name => 'Fraud') }.to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
       end
 
-      it "should freeze cached object" do
+      it "should freeze the cached object" do
         feature = SpecCustomerFeature.create(:feature_name => 'Cancelled')
         SpecCustomerFeature.aggregated_records_cache[feature.feature_name].should be_frozen
       end
 
-      it "should cache clone of record, not record itself" do
+      it "should cache the clone of the record, not the record itself" do
         feature = SpecCustomerFeature.create(:feature_name => 'Returned')
         SpecCustomerFeature.aggregated_records_cache[feature.feature_name].object_id.should_not == feature.object_id
       end
