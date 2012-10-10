@@ -1,5 +1,23 @@
 module Core
   module Behaviors
+    # This module provides additional in-memory caching for model that
+    # behaves in aggregated way. For that reason, <tt>:aggregated_records_cache</tt>
+    # hash class instance variable is added, and the <tt>@aggregated_caching_column</tt>
+    # class instance variable should be defined by class. The value of
+    # corresponding attribute of the model is used as a cache key.
+    #
+    # The original +lookup_self+ method is overloaded to lookup in cache
+    # first. If this lookup fails, native aggregated routines are performed
+    # and resulting record is added to the cache.
+    #
+    # Please note that this module is not to be included manually. Use
+    # class-level +acts_as_aggregated+ instead, supplied with an <tt>:cache_by</tt>
+    # option:
+    #
+    #   class EmailDomain < ActiveRecord::Base
+    #     acts_as_aggregated :cache_by => :domain
+    #     # .. rest of definition
+    #   end
     module AggregatedCacheBehavior
       extend ActiveSupport::Concern
 
@@ -17,6 +35,7 @@ module Core
         after_save :cache_aggregated_record, :on => :create
       end
 
+      # Class methods for model that includes AggregatedCacheBehavior
       module ClassMethods
         # Empty the cache of aggregated records.
         def clear_cache
