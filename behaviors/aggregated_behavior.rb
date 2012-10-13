@@ -27,25 +27,27 @@ module Core
         end
       end
 
-      # Use +lookup_relation+ to get the very first existing record that
+      # Use the +lookup_relation+ to get the very first existing record that
       # corresponds to +self+.
       def lookup_self
         lookup_relation.first
       end
       private :lookup_self
 
-      # Use attributes of +self+ to generate a relation that corresponds to
-      # existing record in the table with the same attributes.
+      # Use the attributes of +self+ to generate a relation that corresponds to
+      # the existing record in the table with the same attributes.
       def lookup_relation
         self.class.unscoped.where(attributes.except(*NON_CONTENT_COLUMNS))
       end
       private :lookup_relation
 
-      # If #lookup_self successfully returns a record, 'replace' self by it
+      # If #lookup_self successfully returns a record, 'replace' +self+ by it
       # (using its id, created_at, updated_at values).
       def lookup_self_and_replace
         @updated_as_aggregated = true
-        if (existing = lookup_self).present?
+        existing               = lookup_self
+
+        if existing.present? then
           to_persistent!(existing)
         end
       end
