@@ -8,8 +8,13 @@ module Core
     # no 'INSERT' statement is executed. If the lookup fails, the original AR
     # save routines are performed.
     module AggregatedBehavior
-      # specifies a list of attributes to exclude from lookup
-      NON_CONTENT_COLUMNS = %w(id created_at updated_at lock_version)
+      extend ActiveSupport::Concern
+
+      included do
+        # specifies a list of attributes to exclude from lookup
+        class_attribute :aggregated_behaviour_non_content_columns, :instance_writer => false
+        self.aggregated_behaviour_non_content_columns = %w(id created_at updated_at lock_version)
+      end
 
       # Override the original AR::Base #save method with the aggregated
       # behavior. This cannot be done using a before_save callback, because, if
@@ -21,9 +26,20 @@ module Core
         run_callbacks(:save) do
           return (lookup_self_and_replace or super) if new_record?
 
-        if changed?
-          to_new_record!
-          lookup_self_and_replace or return super
+          is_any_content_attr_changed = attributes.except(*aggregated_behaviour_non_content_columns).
+              keys.
+              any?{ |attr| attribute_changed?(attr) }
+
+
+
+          if is_any_content_attr_changed
+            to_new_record!
+            lookup_self_and_replace or return super
+
+            true
+          else
+            super
+          end
         end
       end
 
@@ -37,7 +53,7 @@ module Core
       # Use the attributes of +self+ to generate a relation that corresponds to
       # the existing record in the table with the same attributes.
       def lookup_relation
-        self.class.unscoped.where(attributes.except(*NON_CONTENT_COLUMNS))
+        self.class.unscoped.where(attributes.except(*aggregated_behaviour_non_content_columns))
       end
       private :lookup_relation
 

@@ -21,11 +21,17 @@ module Core
     module ClassMethods
       # Adds aggregated behavior to a model.
       def acts_as_aggregated(options = {})
-        options.assert_valid_keys(:cache_by)
+        options.symbolize_keys!
+
+        options.assert_valid_keys(:cache_by, :non_content_columns)
         include AggregatedBehavior
         if options[:cache_by].present?
           @aggregated_caching_column = options[:cache_by]
           include AggregatedCacheBehavior
+        end
+
+        if options[:non_content_columns]
+          self.aggregated_behaviour_non_content_columns += Array.wrap(options[:non_content_columns]).map(&:to_s)
         end
       end
       private :acts_as_aggregated
