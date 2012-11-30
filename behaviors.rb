@@ -25,6 +25,7 @@ module Core
 
         options.assert_valid_keys(:cache_by, :non_content_columns)
         include AggregatedBehavior
+
         if options[:cache_by].present?
           @aggregated_caching_column = options[:cache_by]
           include AggregatedCacheBehavior

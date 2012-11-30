@@ -26,11 +26,9 @@ module Core
         run_callbacks(:save) do
           return (lookup_self_and_replace or super) if new_record?
 
-          is_any_content_attr_changed = attributes.except(*aggregated_behaviour_non_content_columns).
-              keys.
+          is_any_content_attr_changed =
+            attributes.except(*aggregated_behaviour_non_content_columns).keys.
               any?{ |attr| attribute_changed?(attr) }
-
-
 
           if is_any_content_attr_changed
             to_new_record!
