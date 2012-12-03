@@ -7,6 +7,12 @@ module Core
     # lookup succeeds, its id is used to replace id of model being saved, and
     # no 'INSERT' statement is executed. If the lookup fails, the original AR
     # save routines are performed.
+    #
+    # This behavior ignores by default the columns it doesn't consider to
+    # contain content such as the ones created and used by ActiveRecord. These
+    # can be expanded through the API:
+    # @example:
+    #   acts_as_aggregated :non_content_columns => %w(some other colums)
     module AggregatedBehavior
       extend ActiveSupport::Concern
 
