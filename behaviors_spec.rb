@@ -70,7 +70,13 @@ describe Core::Behaviors do
 
   describe "common behavior" do
     before do
-      @info = SpecCustomerInfo.create :spec_customer_id => 1, :spec_person_name_id => 1, :is_current => true
+      @info = SpecCustomerInfo.create(
+        :spec_customer_id => 1,
+        :spec_person_name_id => 1,
+        :is_current => true,
+        :created_at => 5.days.ago,
+        :updated_at => 5.days.ago
+      )
     end
 
     it "should revert changes if exception is raised" do
