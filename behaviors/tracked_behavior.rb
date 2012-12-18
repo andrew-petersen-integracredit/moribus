@@ -45,7 +45,7 @@ module Core
         statement = current_to_false_sql_statement
         affected_rows = self.class.connection.update statement
         unless affected_rows == 1
-          raise ActiveRecord::StaleObjectError, "Attempted to update a stale object: #{self.class.name}"
+          raise ActiveRecord::StaleObjectError.new(self, "update_current")
         end
         true
       end
