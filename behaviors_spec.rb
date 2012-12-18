@@ -3,7 +3,7 @@ require 'spec_helper'
 # Core::Behaviors::Macros.filters_input_on is tested in
 # spec/lib/core/behaviors/macros_spec.rb
 describe Core::Behaviors do
-  before :all do
+  before do
     class SpecStatus < SpecModel(:name => :string, :description => :string)
       acts_as_enumerated
 
@@ -64,7 +64,7 @@ describe Core::Behaviors do
     end
   end
 
-  after :all do
+  after do
     SpecModel.cleanup!
   end
 
