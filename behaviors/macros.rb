@@ -76,7 +76,7 @@ module Core
         options = args.extract_options!
         name = options[:to] or raise ArgumentError.new(":to option should be provided")
         include Extensions::DelegateAssociated unless self < Extensions::DelegateAssociated
-        effective_name = "effective_#{name}".in?(instance_methods(false)) ? "effective_#{name}" : name
+        effective_name = "effective_#{name}".to_sym.in?(instance_methods(false)) ? "effective_#{name}" : name
         klass = reflect_on_association(name).klass
 
         args.each do |association_name|
