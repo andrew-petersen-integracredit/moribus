@@ -73,7 +73,7 @@ module Core
             end
             klass.define_attribute_methods unless klass.attribute_methods_generated?
             attribute_methods = klass.generated_attribute_methods.instance_methods.select{ |m| m !~ EXCLUDE_METHODS_REGEXP }
-            custom_writers = klass.instance_methods(false) & klass.column_names.map{ |name| "#{name}=" }
+            custom_writers = klass.instance_methods(false).map(&:to_s) & klass.column_names.map{ |name| "#{name}=" }
             attribute_methods + enum_methods.flatten + custom_writers
           end
           private :methods_to_delegate_to
