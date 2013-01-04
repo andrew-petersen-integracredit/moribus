@@ -259,12 +259,11 @@ module Core
             else # nil
             end
 
-          if defined?(super)
-            super(result)
-          else
-            # Required for non-column attributes:
-            instance_variable_set("@#{attribute}".to_sym, result)
+          if self.class.column_names.include?(attribute.to_s)
             write_attribute(attribute.to_sym, result)
+          else
+            # If virtual attribute, e.g "something_confirmation"
+            instance_variable_set("@#{attribute}", result)
           end
         end
       end
