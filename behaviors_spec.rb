@@ -12,6 +12,14 @@ describe Core::Behaviors do
       create!(:name => 'active', :description => 'Active')
     end
 
+    class SpecType < SpecModel(:name => :string, :description => :string)
+      acts_as_enumerated
+
+      self.enumeration_model_updates_permitted = true
+      create!(:name => 'important', :description => 'Important')
+      create!(:name => 'unimportant', :description => 'Unimportant')
+    end
+
     class SpecSuffix < SpecModel(:name => :string, :description => :string)
       acts_as_enumerated
 
@@ -36,12 +44,13 @@ describe Core::Behaviors do
       acts_as_aggregated :cache_by => :feature_name
     end
 
-    class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :is_current => :boolean, :lock_version => :integer, :created_at => :datetime, :updated_at => :datetime)
+    class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :spec_type_id => :integer, :is_current => :boolean, :lock_version => :integer, :created_at => :datetime, :updated_at => :datetime)
       attr :custom_field
 
       belongs_to :spec_customer, :inverse_of => :spec_customer_info, :touch => true
       has_aggregated :spec_person_name
       has_enumerated :spec_status
+      has_enumerated :spec_type
 
       acts_as_tracked
     end
@@ -50,7 +59,7 @@ describe Core::Behaviors do
       has_one_current :spec_customer_info, :inverse_of => :spec_customer
       has_enumerated :spec_status, :default => 'inactive'
 
-      delegate_associated :spec_person_name, :custom_field, :to => :spec_customer_info
+      delegate_associated :spec_person_name, :custom_field, :spec_type, :to => :spec_customer_info
 
       share :spec_status_id, :with => :spec_customer_info
     end
@@ -297,6 +306,13 @@ describe Core::Behaviors do
       @customer.last_name.should == 'Smith'
       @customer.should respond_to(:custom_field)
       @customer.should respond_to(:custom_field=)
+    end
+
+    it 'should properly delegate enumerated attributes' do
+      @customer.should respond_to(:spec_type)
+      @customer.should respond_to(:spec_type=)
+      @customer.spec_type = :important
+      @customer.spec_type.should === :important
     end
 
     it "should raise NoMethodError if unknown method received" do
