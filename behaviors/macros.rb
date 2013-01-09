@@ -87,6 +87,8 @@ module Core
             if association_reflection.respond_to?(:delegated_attribute_methods)
               delegate("effective_#{association_name}", :to => effective_name)
               include association_reflection.delegated_attribute_methods
+            else
+              delegate :"#{association_name}=", :to => effective_name
             end
           else
             delegate :"#{association_name}=", :to => effective_name
