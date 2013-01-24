@@ -231,6 +231,8 @@ module Core
           raise ArgumentError, "Do not know how to handle filter `#{filter.inspect}`"
         end
 
+        define_attribute_methods unless attribute_methods_generated?
+
         args.each do |attribute|
           define_filtered_attr_writer(attribute, filter)
         end
@@ -249,7 +251,7 @@ module Core
       # @param [Symbol, Regexp, Proc] filter filter which will be applied to
       #   attribute value at the time of assignment
       def define_filtered_attr_writer(attribute, filter)
-        define_method("#{attribute}=") do |value|
+        define_method("#{attribute}_with_filter=") do |value|
           result =
             case filter
             when Symbol
@@ -261,13 +263,9 @@ module Core
             else # nil
             end
 
-          if self.class.column_names.include?(attribute.to_s)
-            write_attribute(attribute.to_sym, result)
-          else
-            # If virtual attribute, e.g "something_confirmation"
-            instance_variable_set("@#{attribute}", result)
-          end
+          send("#{attribute}_without_filter=", result)
         end
+        alias_method_chain "#{attribute}=", :filter
       end
       private :define_filtered_attr_writer
     end
