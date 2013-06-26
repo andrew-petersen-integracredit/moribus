@@ -9,7 +9,6 @@ module Core
     autoload :AggregatedBehavior
     autoload :AggregatedCacheBehavior
     autoload :TrackedBehavior
-    autoload :AttributedBehavior
     autoload :Macros
     autoload :Extensions
 
@@ -44,12 +43,6 @@ module Core
       end
       private :acts_as_tracked
       
-      # Adds attributed behavior to a model
-      def acts_as_attributed
-        include AttributedBehavior
-      end
-      private :acts_as_attributed
-
       # Return +true+ if self was declared as +acts_as_aggregated+.
       def acts_as_aggregated?
         self < AggregatedBehavior
@@ -58,11 +51,6 @@ module Core
       # Return +true+ if self was declared as +acts_as_tracked+.
       def acts_as_tracked?
         self < TrackedBehavior
-      end
-      
-      # Return +true+ if self was declared as +acts_as_attributed+.
-      def acts_as_attributed?
-        self < AttributedBehavior
       end
     end
 
