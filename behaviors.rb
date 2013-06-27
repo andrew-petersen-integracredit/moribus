@@ -42,7 +42,7 @@ module Core
         include TrackedBehavior
       end
       private :acts_as_tracked
-      
+
       # Return +true+ if self was declared as +acts_as_aggregated+.
       def acts_as_aggregated?
         self < AggregatedBehavior
