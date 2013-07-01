@@ -59,6 +59,7 @@ module Core
     def to_new_record!
       store_before_to_new_record_values
       reset_persistence_values
+      set_parent
       @new_record = true
     end
 
@@ -76,6 +77,10 @@ module Core
       end
       @new_record = false
       true
+    end
+    
+    def set_parent
+      self.previous_id = @_before_to_new_record_values[:id] if self.respond_to?(:previous_id=)
     end
 
     # Helper method used by has_aggregated (in fact, belongs_to)
