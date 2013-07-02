@@ -10,6 +10,14 @@ module Core
       extend ActiveSupport::Concern
 
       included{ around_save :tracked_save_callback }
+      
+      module ClassMethods
+        # Return the column (attribute). Its value is used as a storage for
+        # previous record id.
+        def tracked_by_column
+          @tracked_by_column
+        end
+      end
 
       # The main callback for tracked behavior (see module description). Note
       # that since AR objects are saved in transaction via AR::Transactions

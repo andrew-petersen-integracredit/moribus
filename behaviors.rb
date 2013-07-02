@@ -38,8 +38,13 @@ module Core
       private :acts_as_aggregated
 
       # Adds tracked behavior to a model
-      def acts_as_tracked
+      def acts_as_tracked(options = {})
+        options.symbolize_keys!
+        
+        options.assert_valid_keys(:tracked_by)
         include TrackedBehavior
+        
+        @tracked_by_column = options[:tracked_by]
       end
       private :acts_as_tracked
 
@@ -80,7 +85,10 @@ module Core
     end
     
     def set_parent
-      self.previous_id = @_before_to_new_record_values[:id] if self.respond_to?(:previous_id=)
+      tbc = self.class.tracked_by_column
+      if tbc && self.respond_to?(tbc)
+        write_attribute(tbc, @_before_to_new_record_values[:id])
+      end
     end
 
     # Helper method used by has_aggregated (in fact, belongs_to)
