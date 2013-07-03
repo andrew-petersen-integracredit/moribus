@@ -64,7 +64,6 @@ module Core
     def to_new_record!
       store_before_to_new_record_values
       reset_persistence_values
-      set_parent
       @new_record = true
     end
 

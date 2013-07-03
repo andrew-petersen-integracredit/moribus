@@ -27,6 +27,7 @@ module Core
       def tracked_save_callback
         if content_changed? && persisted?
           to_new_record!
+          set_parent
           begin
             # SQL UPDATE statement is executed in first place to prevent
             # crashing on uniqueness constraints with 'is_current' condition.
