@@ -44,7 +44,7 @@ describe Core::Behaviors do
       acts_as_aggregated :cache_by => :feature_name
     end
 
-    class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :spec_type_id => :integer, :is_current => :boolean, :lock_version => :integer, :created_at => :datetime, :updated_at => :datetime)
+    class SpecCustomerInfo < SpecModel(:spec_customer_id => :integer!, :spec_person_name_id => :integer, :spec_status_id => :integer, :spec_type_id => :integer, :is_current => :boolean, :lock_version => :integer, :created_at => :datetime, :updated_at => :datetime, :previous_id => :integer)
       attr :custom_field
 
       belongs_to :spec_customer, :inverse_of => :spec_customer_info, :touch => true
@@ -52,7 +52,7 @@ describe Core::Behaviors do
       has_enumerated :spec_status
       has_enumerated :spec_type
 
-      acts_as_tracked
+      acts_as_tracked :tracked_by => :previous_id
     end
 
     class SpecCustomer < SpecModel(:spec_status_id => :integer)
@@ -201,6 +201,12 @@ describe Core::Behaviors do
       old_id = @info.id
       @info.update_attributes(:spec_person_name_id => 2)
       SpecCustomerInfo.find(old_id).is_current.should be_false
+    end
+    
+    it "should set previous_id to id of a previous record" do
+      old_id = @info.id
+      @info.update_attributes(:spec_person_name_id => 2)
+      @info.previous_id.should == old_id
     end
 
     it "assigning a new current record should change is_current to false for previous one" do
