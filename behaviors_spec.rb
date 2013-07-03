@@ -202,7 +202,7 @@ describe Core::Behaviors do
       @info.update_attributes(:spec_person_name_id => 2)
       SpecCustomerInfo.find(old_id).is_current.should be_false
     end
-    
+
     it "should set previous_id to id of a previous record" do
       old_id = @info.id
       @info.update_attributes(:spec_person_name_id => 2)
