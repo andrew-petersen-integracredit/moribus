@@ -60,7 +60,7 @@ describe Core::Behaviors do
       has_enumerated :spec_status
       has_enumerated :spec_type
 
-      acts_as_tracked :tracked_by => :previous_id
+      acts_as_tracked :preceding_key => :previous_id
     end
 
     class SpecCustomer < SpecModel(:spec_status_id => :integer)
