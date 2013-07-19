@@ -10,12 +10,13 @@ module Core
       extend ActiveSupport::Concern
 
       included{ around_save :tracked_save_callback }
-      
+
+      # :nodoc:
       module ClassMethods
         # Return the column (attribute). Its value is used as a storage for
         # previous record id.
-        def tracked_by_column
-          @tracked_by_column
+        def preceding_key_column
+          @preceding_key_column
         end
       end
 

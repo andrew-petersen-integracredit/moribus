@@ -40,11 +40,11 @@ module Core
       # Adds tracked behavior to a model
       def acts_as_tracked(options = {})
         options.symbolize_keys!
-        
-        options.assert_valid_keys(:tracked_by)
+
+        options.assert_valid_keys(:preceding_key)
         include TrackedBehavior
-        
-        @tracked_by_column = options[:tracked_by]
+
+        @preceding_key_column = options[:preceding_key]
       end
       private :acts_as_tracked
 
@@ -82,9 +82,10 @@ module Core
       @new_record = false
       true
     end
-    
+
+    # Stores original record id for tracking purposes.
     def set_parent
-      tbc = self.class.tracked_by_column
+      tbc = self.class.preceding_key_column
       if tbc && self.respond_to?(tbc)
         write_attribute(tbc, @_before_to_new_record_values[:id])
       end
