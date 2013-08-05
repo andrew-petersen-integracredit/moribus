@@ -15,9 +15,7 @@ module Core
       module ClassMethods
         # Return the column (attribute). Its value is used as a storage for
         # previous record id.
-        def preceding_key_column
-          @preceding_key_column
-        end
+        attr_reader :preceding_key_column
       end
 
       # The main callback for tracked behavior (see module description). Note
