@@ -47,6 +47,11 @@ module Core
         end
       end
 
+      # Bang version of #save
+      def save!(*args)
+        save(*args) or raise RecordNotSaved
+      end
+
       # Use the +lookup_relation+ to get the very first existing record that
       # corresponds to +self+.
       def lookup_self
