@@ -49,7 +49,7 @@ module Core
 
       # Bang version of #save
       def save!(*args)
-        save(*args) or raise RecordNotSaved
+        save(*args) or raise ActiveRecord::RecordNotSaved
       end
 
       # Use the +lookup_relation+ to get the very first existing record that

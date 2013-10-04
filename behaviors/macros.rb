@@ -136,8 +136,9 @@ module Core
       def tracks_attr_change_date(attribute, change_date)
         define_method("track_#{attribute}_change_date") {
           if changed?
-            changed_at = nil
-            changed_at = Time.zone.now if changed.include? attribute.to_s
+            if changed.include?(attribute.to_s) && changes[attribute.to_s][0].present?
+              changed_at = Time.zone.now
+            end
             self.send("#{change_date}=", changed_at)
           end
         }
