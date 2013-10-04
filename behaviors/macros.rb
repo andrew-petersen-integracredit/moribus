@@ -134,14 +134,12 @@ module Core
       # When a Foo object gets a new :bar attribute value the current time will
       # be set in :bar_changed_at.
       def tracks_attr_change_date(attribute, change_date)
-        define_method("track_#{attribute}_change_date") {
+        define_method("track_#{attribute}_change_date") do
           if changed?
-            if changed.include?(attribute.to_s) && changes[attribute.to_s][0].present?
-              changed_at = Time.zone.now
-            end
+            changed_at = Time.zone.now if changed.include?(attribute.to_s)
             self.send("#{change_date}=", changed_at)
           end
-        }
+        end
 
         before_save "track_#{attribute}_change_date"
       end
