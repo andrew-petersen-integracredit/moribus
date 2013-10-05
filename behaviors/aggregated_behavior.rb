@@ -47,7 +47,7 @@ module Core
         end
       end
 
-      # Bang version of #save
+      # Bang version of #save.
       def save!(*args)
         save(*args) or raise ActiveRecord::RecordNotSaved
       end
