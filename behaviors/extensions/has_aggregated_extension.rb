@@ -39,7 +39,7 @@ module Core
           # Define the delegation module for a reflection, available through
           # #delegated_attribute_methods* method.
           def define_delegation_module(reflection)
-            def reflection.delegated_attribute_methods # :nodoc:
+            reflection.define_singleton_method(:delegated_attribute_methods) do
               @delegated_attribute_methods ||= Module.new
             end
           end
