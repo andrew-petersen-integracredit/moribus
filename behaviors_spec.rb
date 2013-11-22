@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-# Core::Behaviors::Macros.filters_input_on is tested in
-# spec/lib/core/behaviors/macros_spec.rb
 describe Core::Behaviors do
   before do
     class SpecStatus < SpecModel(:name => :string, :description => :string)
@@ -68,8 +66,6 @@ describe Core::Behaviors do
       has_enumerated :spec_status, :default => 'inactive'
 
       delegate_associated :spec_person_name, :custom_field, :spec_type, :to => :spec_customer_info
-
-      share :spec_status_id, :with => :spec_customer_info
     end
 
     class SpecCustomerEmail < SpecModel(:spec_customer_id => :integer, :email => :string, :is_current => :boolean, :status => :string)
