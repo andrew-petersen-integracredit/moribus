@@ -3,29 +3,6 @@ module Core
     # Declares a set of helper methods for more efficient use of aggregated
     # and tracked models.
     module Macros
-      # Specify a set of attributes to be 'shared' with the associated
-      # object. Define a before_save callback that sets values of designated
-      # attributes in the associated object as they are in self.
-      #
-      # Purpose: the Customer has a customer_status, and it is defined via
-      # state_machine. This sets a special behavior and set of scopes that rely
-      # on the Customer's 'customer_status' column. To keep track of status
-      # changes, the CustomerInfo tracked model, associated with the customer
-      # also has a 'customer_status' column. That will allow status changes
-      # to be tracked via the tracked behavior of CustomerInfo.
-      def share(*args)
-        options = args.extract_options!
-        association_name = options[:with] or raise ArgumentError.new(":with option should be provided")
-        attributes = args.dup
-
-        before_save do
-          unless (associated = send(association_name)).nil?
-            attributes.each{ |attr| associated.send(:"#{attr}=", send(attr)) }
-          end
-        end
-      end
-      private :share
-
       # For each of the passed arguments, which may either be method or
       # association names, define its delegation to the specified association.
       # If it responds to the effective reader, delegate to it.
@@ -123,45 +100,6 @@ module Core
       end
       private :has_aggregated
 
-      # Record +attribute+ change date in +change_date+ field. For example:
-      #
-      # class Foo
-      #   ...
-      #   track_attr_change_at :bar, :bar_changed_at
-      #   ...
-      # end
-      #
-      # When a Foo object gets a new :bar attribute value the current time will
-      # be set in :bar_changed_at.
-      def tracks_attr_change_date(attribute, change_date)
-        define_method("track_#{attribute}_change_date") do
-          if changed?
-            changed_at = Time.zone.now if changed.include?(attribute.to_s)
-            self.send("#{change_date}=", changed_at)
-          end
-        end
-
-        before_save "track_#{attribute}_change_date"
-      end
-      private :tracks_attr_change_date
-
-      # Record status +attribute+ change date in +change_date+
-      # (default - :status_changed_at) field.
-      # It's a shortcut to +track_attr_change_date+ method. For example:
-      #
-      # class ApplicationInfo
-      #   ...
-      #   track_status_changed_at :application_status_id
-      #   ...
-      # end
-      #
-      # When :application_status_id gets a new value the current time will be
-      # set in :status_changed_at.
-      def tracks_status_change_date(attribute, change_date = :status_changed_at)
-        tracks_attr_change_date(attribute, change_date)
-      end
-      private :tracks_status_change_date
-
       # Declare a reader that will build associated object if it does not exist.
       # We can actually extend an association's readers like:
       #
@@ -179,94 +117,6 @@ module Core
         eoruby
       end
       private :define_effective_reader_for
-
-      # Creates a writer method to remove unwanted characters from string input.
-      # This method is intended to be used in model declarations.
-      #
-      # @overload filters_input_on(methods, filter_options)
-      #   You can provide custom filters or use one of predefined Regexp filter.
-      #   Allowed filters:
-      #   - value method, like String.strip
-      #   - custom regular expression, but make sure it has type Regexp
-      #   - predefined regular expression
-      #   - custom lambda
-      #   Available predefined Regexp filters:
-      #   - :alpha # eliminates all non-digit characters, except \(back slash) and .(dot)
-      #
-      #   @param [Symbol, ...] methods one or more writer methods names
-      #   @param [Hash] filter_options
-      #   @option filter_options [Symbol, Regexp, Proc] :filter
-      #
-      #   @return [nil]
-      #
-      #   @raise [ArgumentError] in case of invalid filter is given
-      #
-      #   @example
-      #     filters_input_on :method_1, :method_2, :filter => :alpha
-      #     filters_input_on :method_1, :filter => :strip # Eliminate heading and trailing spaces
-      #     filters_input_on :method_1, :filter => /[\d]/ # Eliminate all digits
-      #     filters_input_on :method_1, :filter => lambda { |value| value.customized }
-      #
-      # @overload filters_input_on(methods)
-      #   You can use default filter method String.squish from ActiveSupport.
-      #   @param [Symbol, ...] methods one of more writer methods names
-      #
-      #   @return [nil]
-      #
-      #   @raise [ArgumentError] in case of invalid filter is given
-      #
-      #   @example
-      #     filters_input_on :method_1 # Assumes you are using String.squish
-      def filters_input_on(*args)
-        options = args.extract_options!
-
-        predefined_filters = {
-          :alpha      => /[^\d.]/
-        }
-        filter_name = options.fetch(:filter, :squish)
-        filter = predefined_filters[filter_name] || filter_name
-
-        unless [Symbol, Regexp, Proc].include?(filter.class)
-          raise ArgumentError, "Do not know how to handle filter `#{filter.inspect}`"
-        end
-
-        define_attribute_methods unless attribute_methods_generated?
-
-        args.each do |attribute|
-          define_filtered_attr_writer(attribute, filter)
-        end
-
-        nil
-      end
-      private :filters_input_on
-
-      # Generates a writer method used by filters_input_on to declare
-      # an attribute writer.
-      # This method is not intended to be used in class declarations.
-      #
-      # @param [Symbol, String] attribute name of attribute which a writter will
-      #   be defined for.
-      #   It has to be given without ending =, that's not writer name.
-      # @param [Symbol, Regexp, Proc] filter filter which will be applied to
-      #   attribute value at the time of assignment
-      def define_filtered_attr_writer(attribute, filter)
-        define_method("#{attribute}_with_filter=") do |value|
-          result =
-            case filter
-            when Symbol
-              value.respond_to?(filter) ? value.send(filter) : value
-            when Regexp
-              value.respond_to?(:gsub) ? value.gsub(filter, '') : value
-            when Proc
-              filter.call(value)
-            else # nil
-            end
-
-          send("#{attribute}_without_filter=", result)
-        end
-        alias_method_chain "#{attribute}=", :filter
-      end
-      private :define_filtered_attr_writer
     end
   end
 end
