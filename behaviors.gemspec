@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.name        = "behaviors"
   s.version     = Behaviors::VERSION
   s.authors     = ["TMX Credit", "Artem Kuzko", "Zachary Belzer", "Sergey Potapov"]
-  s.email       = ["rubygems@tmxcredit.com", "akuzko@sphereconsultinginc.com", "blake131313@gmail.com"]
+  s.email       = ["rubygems@tmxcredit.com", "akuzko@sphereconsultinginc.com", "zbelzer@gmail.com", "blake131313@gmail.com"]
   s.homepage    = "https://github.com/TMXCredit/behaviors"
   s.licenses    = ["LICENSE"]
   s.summary     = %q{Introduces Aggregated and Tracked behavior to ActiveRecord::Base models}
