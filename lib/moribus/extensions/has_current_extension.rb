@@ -1,4 +1,4 @@
-module Behaviors
+module Moribus
   module Extensions
     # Minor extension for Rails' +has_one+ association that will help
     # dealing with current record assignment.

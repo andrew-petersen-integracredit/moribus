@@ -1,7 +1,7 @@
 # SpecModule tracks class names created via SpecModel method for next cleanup.
-module BehaviorsSpecModel
+module MoribusSpecModel
   def self.cleanup!
-    ObjectSpace.each_object(BehaviorsSpecModel) do |klass|
+    ObjectSpace.each_object(MoribusSpecModel) do |klass|
       if Object.const_defined? klass.name.to_sym
         conn, table_name = klass.connection, klass.table_name
         conn.drop_table(table_name) if conn.tables.include?(table_name)
@@ -15,22 +15,22 @@ end
 # Creates an anonymous class, inherited from AR::Base. When inherited itself,
 # creates a table based on passed parameters.
 #  Example:
-#    class Foo < BehaviorsSpecModel(:name => :string)
+#    class Foo < MoribusSpecModel(:name => :string)
 #      has_many :bars
 #    end
-#    class Bar < BehaviorsSpecModel(:foo_id => :integer, :amount => :float)
+#    class Bar < MoribusSpecModel(:foo_id => :integer, :amount => :float)
 #      belongs_to :foo
 #    end
 #    ....
-#    BehaviorsSpecModel.cleanup!
-def BehaviorsSpecModel(column_definition = {})
+#    MoribusSpecModel.cleanup!
+def MoribusSpecModel(column_definition = {})
   Class.new(ActiveRecord::Base) do
     self.abstract_class = true
 
     singleton_class.class_eval do
       alias_method :orig_inherited, :inherited
       define_method :inherited do |base|
-        base.extend BehaviorsSpecModel
+        base.extend MoribusSpecModel
         orig_inherited base
 
         table_name = base.table_name

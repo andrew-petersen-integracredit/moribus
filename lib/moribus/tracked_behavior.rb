@@ -1,4 +1,4 @@
-module Behaviors
+module Moribus
   # Adds tracked behavior to a model. A tracked model should have an
   # 'is_current' boolean column. Whenever the changed tracked object is about
   # to be saved, it memorizes its id, marks itself as a new record, and then

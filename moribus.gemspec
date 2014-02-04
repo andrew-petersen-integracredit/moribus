@@ -1,21 +1,21 @@
 # -*- encoding: utf-8 -*-
 
 $:.push File.expand_path("../lib", __FILE__)
-require "behaviors/version"
+require "moribus/version"
 
 Gem::Specification.new do |s|
-  s.name        = "behaviors"
-  s.version     = Behaviors::VERSION
+  s.name        = "moribus"
+  s.version     = Moribus::VERSION
   s.authors     = ["TMX Credit", "Artem Kuzko", "Zachary Belzer", "Sergey Potapov"]
   s.email       = ["rubygems@tmxcredit.com", "akuzko@sphereconsultinginc.com", "zbelzer@gmail.com", "blake131313@gmail.com"]
-  s.homepage    = "https://github.com/TMXCredit/behaviors"
+  s.homepage    = "https://github.com/TMXCredit/moribus"
   s.licenses    = ["LICENSE"]
   s.summary     = %q{Introduces Aggregated and Tracked behavior to ActiveRecord::Base models}
   s.description = %q{Introduces Aggregated and Tracked behavior to ActiveRecord::Base models, as well
     as Macros and Extensions modules for more efficient usage. Effectively replaces
     both Aggregatable and Trackable modules.}
 
-  s.rubyforge_project = "behaviors"
+  s.rubyforge_project = "moribus"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

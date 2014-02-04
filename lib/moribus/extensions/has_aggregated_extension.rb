@@ -1,4 +1,4 @@
-module Behaviors
+module Moribus
   module Extensions
     # Minor extension for Rails' +belongs_to+ association that will correct
     # foreign key assignment during association autosave.

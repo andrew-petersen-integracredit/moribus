@@ -1,7 +1,7 @@
 # Introduces Aggregated and Tracked behavior to ActiveRecord::Base models, as well
 # as Macros and Extensions modules for more efficient usage. Effectively replaces
 # both Aggregatable and Trackable modules.
-module Behaviors
+module Moribus
   extend ActiveSupport::Concern
   extend ActiveSupport::Autoload
 
@@ -129,5 +129,5 @@ module Behaviors
 end
 
 ActiveRecord::Base.class_eval do
-  include Behaviors
+  include Moribus
 end

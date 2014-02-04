@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Behaviors::AliasAssociation do
+describe Moribus::AliasAssociation do
   before do
-    class SpecPost < BehaviorsSpecModel(:spec_author_id => :integer, :body => :string)
+    class SpecPost < MoribusSpecModel(:spec_author_id => :integer, :body => :string)
       belongs_to :spec_author   , :alias => :creator
       has_many   :spec_comments , :alias => :remarks
       has_one    :spec_post_info, :alias => :information
@@ -12,21 +12,21 @@ describe Behaviors::AliasAssociation do
       alias_association :post_info, :spec_post_info
     end
 
-    class SpecAuthor < BehaviorsSpecModel(:name => :string)
+    class SpecAuthor < MoribusSpecModel(:name => :string)
       has_many :spec_posts
     end
 
-    class SpecPostInfo < BehaviorsSpecModel(:spec_post_id => :integer, :ip => :string)
+    class SpecPostInfo < MoribusSpecModel(:spec_post_id => :integer, :ip => :string)
       belongs_to :spec_post, :alias => :note
     end
 
-    class SpecComment < BehaviorsSpecModel(:spec_post_id => :integer, :body => :string)
+    class SpecComment < MoribusSpecModel(:spec_post_id => :integer, :body => :string)
       belongs_to :spec_post
     end
   end
 
   after do
-    BehaviorsSpecModel.cleanup!
+    MoribusSpecModel.cleanup!
   end
 
   before do

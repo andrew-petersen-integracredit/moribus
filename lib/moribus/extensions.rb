@@ -1,4 +1,4 @@
-module Behaviors
+module Moribus
   # Extends the default Rails +has_one+ and +belongs_to+ associations
   # to enable tracked and aggregated behaviors.
   module Extensions

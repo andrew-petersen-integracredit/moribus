@@ -1,19 +1,19 @@
-module Behaviors
-# When included, adds alias_association public class method for aliasing
-# specific association. Association name and association-specific methods
-# will be aliased. Example:
-#
-#   class Customer
-#     belongs_to :person_name
-#     has_many :orders
-#     alias_association :name, :person_name
-#     alias_association :bookings, :orders
-#   end
-#
-#   Customer.reflect_on_association(:name) # => #<ActiveRecord::Reflection::AssociationReflection ...>
-#   c = Customer.includes(:bookings).first
-#   c.booking_ids # => [1, 2, 3]
-#   c.build_name(:first_name => 'John', :last_name => 'Smith') # => #<PersonName ...>
+module Moribus
+  # When included, adds alias_association public class method for aliasing
+  # specific association. Association name and association-specific methods
+  # will be aliased. Example:
+  #
+  #   class Customer
+  #     belongs_to :person_name
+  #     has_many :orders
+  #     alias_association :name, :person_name
+  #     alias_association :bookings, :orders
+  #   end
+  #
+  #   Customer.reflect_on_association(:name) # => #<ActiveRecord::Reflection::AssociationReflection ...>
+  #   c = Customer.includes(:bookings).first
+  #   c.booking_ids # => [1, 2, 3]
+  #   c.build_name(:first_name => 'John', :last_name => 'Smith') # => #<PersonName ...>
   module AliasAssociation
     extend ActiveSupport::Concern
 

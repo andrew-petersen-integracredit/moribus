@@ -1,4 +1,4 @@
-module Behaviors
+module Moribus
   module Extensions
     # This module is included by the class on the first call to
     # +delegate_associated+ method. When included, it will add

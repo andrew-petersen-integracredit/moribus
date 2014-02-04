@@ -1,4 +1,4 @@
-module Behaviors
+module Moribus
   # Declares a set of helper methods for more efficient use of aggregated
   # and tracked models.
   module Macros

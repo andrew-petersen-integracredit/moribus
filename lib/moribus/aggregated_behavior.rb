@@ -1,4 +1,4 @@
-module Behaviors
+module Moribus
   # Adds aggregated behavior to a model. An aggregated model tries to insure
   # it will not duplicate itself for whatever parents it belongs to. Whenever
   # an aggregated model is about to be saved, it uses its attributes to

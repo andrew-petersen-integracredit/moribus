@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Behaviors do
+describe Moribus do
   before do
-    class SpecStatus < BehaviorsSpecModel(:name => :string, :description => :string)
+    class SpecStatus < MoribusSpecModel(:name => :string, :description => :string)
       acts_as_enumerated
 
       self.enumeration_model_updates_permitted = true
@@ -10,7 +10,7 @@ describe Behaviors do
       create!(:name => 'active', :description => 'Active')
     end
 
-    class SpecType < BehaviorsSpecModel(:name => :string, :description => :string)
+    class SpecType < MoribusSpecModel(:name => :string, :description => :string)
       acts_as_enumerated
 
       self.enumeration_model_updates_permitted = true
@@ -18,7 +18,7 @@ describe Behaviors do
       create!(:name => 'unimportant', :description => 'Unimportant')
     end
 
-    class SpecSuffix < BehaviorsSpecModel(:name => :string, :description => :string)
+    class SpecSuffix < MoribusSpecModel(:name => :string, :description => :string)
       acts_as_enumerated
 
       self.enumeration_model_updates_permitted = true
@@ -26,7 +26,7 @@ describe Behaviors do
       create!(:name => 'jr', :description => 'Junior')
     end
 
-    class SpecPersonName < BehaviorsSpecModel(:first_name => :string, :last_name => :string, :spec_suffix_id => :integer)
+    class SpecPersonName < MoribusSpecModel(:first_name => :string, :last_name => :string, :spec_suffix_id => :integer)
       acts_as_aggregated
       has_enumerated :spec_suffix, :default => ''
 
@@ -38,11 +38,11 @@ describe Behaviors do
       end
     end
 
-    class SpecCustomerFeature < BehaviorsSpecModel(:feature_name => :string)
+    class SpecCustomerFeature < MoribusSpecModel(:feature_name => :string)
       acts_as_aggregated :cache_by => :feature_name
     end
 
-    class SpecCustomerInfo < BehaviorsSpecModel( :spec_customer_id    => :integer!,
+    class SpecCustomerInfo < MoribusSpecModel( :spec_customer_id    => :integer!,
                                         :spec_person_name_id => :integer,
                                         :spec_status_id      => :integer,
                                         :spec_type_id        => :integer,
@@ -61,14 +61,14 @@ describe Behaviors do
       acts_as_tracked :preceding_key => :previous_id
     end
 
-    class SpecCustomer < BehaviorsSpecModel(:spec_status_id => :integer)
+    class SpecCustomer < MoribusSpecModel(:spec_status_id => :integer)
       has_one_current :spec_customer_info, :inverse_of => :spec_customer
       has_enumerated :spec_status, :default => 'inactive'
 
       delegate_associated :spec_person_name, :custom_field, :spec_type, :to => :spec_customer_info
     end
 
-    class SpecCustomerEmail < BehaviorsSpecModel(:spec_customer_id => :integer, :email => :string, :is_current => :boolean, :status => :string)
+    class SpecCustomerEmail < MoribusSpecModel(:spec_customer_id => :integer, :email => :string, :is_current => :boolean, :status => :string)
       connection.add_index table_name, [:email, :is_current], :unique => true
 
       belongs_to :spec_customer
@@ -78,7 +78,7 @@ describe Behaviors do
   end
 
   after do
-    BehaviorsSpecModel.cleanup!
+    MoribusSpecModel.cleanup!
   end
 
   describe "common behavior" do
@@ -121,9 +121,9 @@ describe Behaviors do
       it "should raise an error when including AggregatedCacheBehavior without AggregatedBehavior" do
         expect{
           Class.new(ActiveRecord::Base).class_eval do
-            include Behaviors::AggregatedCacheBehavior
+            include Moribus::AggregatedCacheBehavior
           end
-        }.to raise_error(Behaviors::AggregatedCacheBehavior::NotAggregatedError)
+        }.to raise_error(Moribus::AggregatedCacheBehavior::NotAggregatedError)
       end
     end
 

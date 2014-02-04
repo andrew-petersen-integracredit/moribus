@@ -1,4 +1,4 @@
-module Behaviors
+module Moribus
   # This module provides additional in-memory caching for model that
   # behaves in aggregated way. For that reason, <tt>:aggregated_records_cache</tt>
   # hash class instance variable is added, and the <tt>@aggregated_caching_column</tt>
