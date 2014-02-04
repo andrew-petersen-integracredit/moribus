@@ -1,6 +1,6 @@
-# Behaviors
+# Moribus
 
-Behaviors is a set of tools for managing complex graphs of ActiveRecord objects
+Moribus is a set of tools for managing complex graphs of ActiveRecord objects
 for which there are many inbound foreign keys, attributes and associations with
 high rates of change, and business demands for well-tracked change history.
 

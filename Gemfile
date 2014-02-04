@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in behaviors.gemspec
+# Specify your gem's dependencies in moribus.gemspec
 gemspec
 
 gem "power_enum", "~> 1.3"
