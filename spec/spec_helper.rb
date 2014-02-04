@@ -1,12 +1,6 @@
 ENV["RAILS_ENV"] ||= 'test'
 
 require "simplecov"
-require "simplecov-rcov-text"
-
-SimpleCov.formatter = SimpleCov::Formatter::RcovTextFormatter
-SimpleCov.start do
-  add_filter "/spec/"
-end
 
 require File.expand_path("../../spec/dummy/config/environment", __FILE__)
 require "rspec/rails"
