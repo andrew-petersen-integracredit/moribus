@@ -1,6 +1,6 @@
 ENV["RAILS_ENV"] ||= 'test'
 
-require "simplecov"
+require "simplecov" unless ENV['CI']
 
 require File.expand_path("../../spec/dummy/config/environment", __FILE__)
 require "rspec/rails"
