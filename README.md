@@ -1,5 +1,7 @@
 # Moribus
 
+[![Build Status](https://secure.travis-ci.org/TMXCredit/moribus.png)](http://travis-ci.org/TMXCredit/moribus)
+
 Moribus is a set of tools for managing complex graphs of ActiveRecord objects
 for which there are many inbound foreign keys, attributes and associations with
 high rates of change, and business demands for well-tracked change history.
