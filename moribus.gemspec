@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.authors     = ["TMX Credit", "Artem Kuzko", "Sergey Potapov"]
   s.email       = ["rubygems@tmxcredit.com", "a.kuzko@gmail.com", "blake131313@gmail.com"]
   s.homepage    = "https://github.com/TMXCredit/moribus"
-  s.licenses    = ["LICENSE"]
+  s.licenses    = ["MIT"]
   s.summary     = %q{Introduces Aggregated and Tracked behavior to ActiveRecord::Base models}
   s.description = %q{Introduces Aggregated and Tracked behavior to ActiveRecord::Base models, as well
     as Macros and Extensions modules for more efficient usage.}
