@@ -6,14 +6,13 @@ require "moribus/version"
 Gem::Specification.new do |s|
   s.name        = "moribus"
   s.version     = Moribus::VERSION
-  s.authors     = ["TMX Credit", "Artem Kuzko", "Zachary Belzer", "Sergey Potapov"]
-  s.email       = ["rubygems@tmxcredit.com", "akuzko@sphereconsultinginc.com", "zbelzer@gmail.com", "blake131313@gmail.com"]
+  s.authors     = ["TMX Credit", "Artem Kuzko", "Sergey Potapov"]
+  s.email       = ["rubygems@tmxcredit.com", "a.kuzko@gmail.com", "blake131313@gmail.com"]
   s.homepage    = "https://github.com/TMXCredit/moribus"
   s.licenses    = ["LICENSE"]
   s.summary     = %q{Introduces Aggregated and Tracked behavior to ActiveRecord::Base models}
   s.description = %q{Introduces Aggregated and Tracked behavior to ActiveRecord::Base models, as well
-    as Macros and Extensions modules for more efficient usage. Effectively replaces
-    both Aggregatable and Trackable modules.}
+    as Macros and Extensions modules for more efficient usage.}
 
   s.rubyforge_project = "moribus"
 
@@ -26,7 +25,6 @@ Gem::Specification.new do |s|
   s.add_dependency("rails",      "~> 3.2")
   s.add_dependency("power_enum", "~> 1.3")
   s.add_dependency("yard",       ">= 0")
-  s.add_dependency("gemfury",    ">= 0")
 
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"

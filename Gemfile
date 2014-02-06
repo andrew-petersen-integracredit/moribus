@@ -9,8 +9,6 @@ group :development do
   gem "redcarpet"
   gem "yard"
   gem "pry"
-
-  gem "gemfury", :require => false
 end
 
 group :test do
