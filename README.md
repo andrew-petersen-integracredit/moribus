@@ -10,13 +10,13 @@ high rates of change, and business demands for well-tracked change history.
 
 AggregatedBehavior implements a pattern in which an object's identity
 is modeled apart from its attributes and outbound associations. This enables
-higher level of normalization of your data, since one set of properties
+a higher level of normalization of your data, since one set of properties
 may be shared among multiple objects. This set of properties - attributes
 and outbound associations - are modeled on an object called an "info object".
 And we say that this info object is aggregated by host object(s) and it acts
 (behaves) as aggregated. When an aggregated object is about to be saved, it
 looks up for an existing record with the same attributes in the database under
-the hood, and if it founds, it 'replaces' itself by that record. This allows
+the hood, and if it is found, it 'replaces' itself with that record. This allows
 you to work with attributes of your entity as if they are properties of an
 actual model and normalize your data at the same time.
 
@@ -30,25 +30,25 @@ it would be difficult to avoid many StaleObjectErrors.
 
 TrackedBehavior implements history tracking on the stack of objects
 representing the identity object's attributes and outbound associations.
-When a model behaves as a tracked behavior, it will never get actually
+When a model behaves as a tracked behavior, it will never actually get
 updated. Instead, it will update it's own 'is_current' column to false
-and will be saved as a new record with new attribute values and
+and will be saved as a new record with new attribute values and the
 'is_current' column as 'true'. Thus, under the hood, new attributes
-will supersede old attributes, leaving old record as history one.
+will supersede old attributes, leaving the old record as historical.
 
 ##Macros, Associations and Combination
 
-Despite the fact that Behaviors may be used by models on they're own,
-they main purpose is to be used within associations and in conjunction.
-The best way to demonstrate this is by example.
+Despite the fact that Behaviors may be used by models on their own,
+their main purpose is to be used within associations and, in conjunction 
+with, associations.  The best way to demonstrate this is by example.
 
-Lets assume we have a User entity with attributes that should be tracked
+Let's assume we have a User entity with attributes that should be tracked
 and normalized. Those attributes may be, for example, `:first_name`,
-`:last_name` and `:status` as enumerated integer value. This makes entity
-may be represented with three models: `User` - as main model for interactions,
+`:last_name` and `:status` as enumerated integer value. This entity
+may be represented with three models: `User` - with main model for interactions,
 tracked `UserInfo` (`user_id`, `person_name_id`, `status`) for tracking, and
 aggregated `UserName` (`first_name`, `last_name`) for name normalization.
-Class definitions for that models will look as follows:
+Class definitions for these models will look as follows:
 
 ```ruby
   class User < ActiveRecord::Base
