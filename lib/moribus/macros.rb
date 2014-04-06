@@ -76,7 +76,9 @@ module Moribus
     # :conditions clause. Also define acceptance of nested attributes for
     # association and effective reader.
     def has_one_current(name, options = {})
-      reflection = has_one name, options.merge(:conditions => {:is_current => true}).reverse_merge(:order => 'id DESC')
+      options = options.merge(:conditions => {:is_current => true}).reverse_merge(:order => 'id DESC')
+
+      reflection = has_one(name, nil, options)
       reflection.options[:is_current] = true
       accepts_nested_attributes_for name
       define_effective_reader_for name

@@ -46,9 +46,9 @@ module Moribus
       end
 
       # Allows :alias option to alias has_one association
-      def has_one(name, opts = {})
+      def has_one(name, scope = nil, opts = {})
         alias_name = opts.delete(:alias)
-        reflection = super(name, opts)
+        reflection = super(name, scope, opts)
         alias_association(alias_name, name) if alias_name
         reflection
       end

@@ -49,7 +49,7 @@ module Moribus
         # and writers.
         def add_delegated_methods(reflection)
           mod = reflection.delegated_attribute_methods
-          model.define_attribute_methods unless model.attribute_methods_generated?
+          model.define_attribute_methods
           methods_to_delegate = methods_to_delegate_to(reflection) - model.instance_methods.map(&:to_sym)
           methods_to_delegate.each do |method|
             mod.delegate method, :to => name
@@ -70,7 +70,7 @@ module Moribus
             name = reflection.name
             [name, "#{name}="]
           end
-          klass.define_attribute_methods unless klass.attribute_methods_generated?
+          klass.define_attribute_methods
           attribute_methods = klass.generated_attribute_methods.instance_methods.select{ |m| m !~ EXCLUDE_METHODS_REGEXP }
           custom_writers = klass.instance_methods(false).map(&:to_s) & klass.column_names.map{ |name| "#{name}=" }
           (attribute_methods + enum_methods.flatten + custom_writers).map(&:to_sym)
