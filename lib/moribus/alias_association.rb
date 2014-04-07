@@ -30,24 +30,39 @@ module Moribus
       end
 
       # Allows :alias option to alias belongs_to association
-      def belongs_to(name, opts = {})
-        alias_name = opts.delete(:alias)
-        reflection = super(name, opts)
+      def belongs_to(name, scope = nil, opts = {})
+        if scope.is_a?(Hash)
+          alias_name = scope.delete(:alias)
+        else
+          alias_name = opts.delete(:alias)
+        end
+
+        reflection = super(name, scope, opts)
         alias_association(alias_name, name) if alias_name
         reflection
       end
 
       # Allows :alias option to alias has_many association
-      def has_many(name, opts = {})
-        alias_name = opts.delete(:alias)
-        reflection = super(name, opts)
+      def has_many(name, scope = nil, opts = {}, &extension)
+        if scope.is_a?(Hash)
+          alias_name = scope.delete(:alias)
+        else
+          alias_name = opts.delete(:alias)
+        end
+
+        reflection = super(name, scope, opts, &extension)
         alias_association(alias_name, name) if alias_name
         reflection
       end
 
       # Allows :alias option to alias has_one association
       def has_one(name, scope = nil, opts = {})
-        alias_name = opts.delete(:alias)
+        if scope.is_a?(Hash)
+          alias_name = scope.delete(:alias)
+        else
+          alias_name = opts.delete(:alias)
+        end
+
         reflection = super(name, scope, opts)
         alias_association(alias_name, name) if alias_name
         reflection
