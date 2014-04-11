@@ -73,10 +73,17 @@ module Moribus
     end
 
     # Define a +has_one+ association with `{ where(is_current: true) }`
-    # for scope. Also define acceptance of nested attributes for
+    # as scope. Also define acceptance of nested attributes for
     # association and effective reader.
-    def has_one_current(name, options = {})
-      scope = -> { where(is_current: true).order(id: :desc) }
+    def has_one_current(name, scope = nil, options = {})
+      current_scope = -> { where(is_current: true).order(id: :desc) }
+
+      if scope.is_a?(Hash)
+        options = scope
+        scope   = current_scope
+      else
+        scope = current_scope unless scope.is_a?(Proc)
+      end
 
       reflection = has_one(name, scope, options)
       reflection.options[:is_current] = true
