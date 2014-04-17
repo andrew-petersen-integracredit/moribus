@@ -76,13 +76,19 @@ module Moribus
     # as scope. Also define acceptance of nested attributes for
     # association and effective reader.
     def has_one_current(name, scope = nil, options = {})
+      options = scope if scope.is_a?(Hash)
+
       current_scope = -> { where(is_current: true).order(id: :desc) }
 
-      if scope.is_a?(Hash)
-        options = scope
-        scope   = current_scope
+      if scope.is_a?(Proc)
+        prev_scope = scope
+        if instance_exec(&prev_scope).to_sql =~ /ORDER BY/
+          scope = proc { instance_exec(&prev_scope).merge(-> { where(is_current: true) })  }
+        else
+          scope = proc { instance_exec(&prev_scope).merge(current_scope)  }
+        end
       else
-        scope = current_scope unless scope.is_a?(Proc)
+        scope = current_scope
       end
 
       reflection = has_one(name, scope, options)
