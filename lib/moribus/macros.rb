@@ -82,7 +82,7 @@ module Moribus
 
       if scope.is_a?(Proc)
         prev_scope = scope
-        if instance_exec(&prev_scope).to_sql =~ /ORDER BY/
+        if instance_exec(&prev_scope).order_values.any?
           scope = proc { instance_exec(&prev_scope).merge(-> { where(is_current: true) })  }
         else
           scope = proc { instance_exec(&prev_scope).merge(current_scope)  }
