@@ -3,7 +3,7 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in moribus.gemspec
 gemspec
 
-gem "power_enum", "~> 1.3"
+gem "power_enum", "~> 2.5.0"
 
 group :development do
   gem "redcarpet"
@@ -12,8 +12,8 @@ group :development do
 end
 
 group :test do
-  gem "simplecov",           :require => false
-  gem "simplecov-rcov-text", :require => false
+  gem "simplecov",           require: false
+  gem "simplecov-rcov-text", require: false
 
   gem "timecop"
 end
