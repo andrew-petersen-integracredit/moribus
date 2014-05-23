@@ -1,3 +1,5 @@
+require 'power_enum'
+
 # Introduces Aggregated and Tracked behavior to ActiveRecord::Base models, as well
 # as Macros and Extensions modules for more efficient usage. Effectively replaces
 # both Aggregatable and Trackable modules.
