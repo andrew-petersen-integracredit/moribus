@@ -1,3 +1,5 @@
+require 'power_enum'
+
 # Introduces Aggregated and Tracked behavior to ActiveRecord::Base models, as well
 # as Macros and Extensions modules for more efficient usage. Effectively replaces
 # both Aggregatable and Trackable modules.
@@ -124,7 +126,6 @@ module Moribus
     self.id = nil
     self.updated_at = nil if respond_to?(:updated_at=)
     self.created_at = nil if respond_to?(:created_at=)
-    self.is_current = true if respond_to?(:is_current=)
 
     # mark all other attributes is changing
     (attributes.keys - changes.keys).each{ |key| self.send(:"#{key}_will_change!") }

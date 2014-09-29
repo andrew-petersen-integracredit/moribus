@@ -1,6 +1,6 @@
 # Moribus
 
-[![Build Status](https://secure.travis-ci.org/TMXCredit/moribus.png)](http://travis-ci.org/TMXCredit/moribus)
+[![Build Status](https://secure.travis-ci.org/HornsAndHooves/moribus.png)](http://travis-ci.org/HornsAndHooves/moribus)
 
 Moribus is a set of tools for managing complex graphs of ActiveRecord objects
 for which there are many inbound foreign keys, attributes and associations with
@@ -88,6 +88,10 @@ top-level operations will look exactly the same:
   # record that reuses existing UserName information.
 ```
 
+## Use it
+
+    gem 'HornsAndHooves-moribus', require: 'moribus'
+
 ## Run tests
 
 ```sh
@@ -100,5 +104,7 @@ rake spec
 * [Potapov Sergey](https://github.com/greyblake)
 
 ## Copyright
+
+Copyright (c) 2014 HornsAndHooves.
 
 Copyright (c) 2013 TMX Credit.

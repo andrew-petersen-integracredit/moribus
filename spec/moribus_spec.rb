@@ -101,7 +101,7 @@ describe Moribus do
           @info.update_attributes :spec_customer_id => nil, :spec_person_name_id => 2
         }.not_to change(SpecCustomerInfo, :count)
       end
-      @info.new_record?.should be_false
+      expect(@info.new_record?).to eq false
       @info.id.should == old_id
       @info.updated_at.should == old_updated_at
       @info.created_at.should == old_created_at
@@ -204,7 +204,7 @@ describe Moribus do
     it "should set is_current record to false for superseded record" do
       old_id = @info.id
       @info.update_attributes(:spec_person_name_id => 2)
-      SpecCustomerInfo.find(old_id).is_current.should be_false
+      expect(SpecCustomerInfo.find(old_id).is_current).to eq false
     end
 
     it "should set previous_id to the id of the previous record" do
@@ -217,7 +217,7 @@ describe Moribus do
       new_info = SpecCustomerInfo.new :spec_person_name_id => 2, :is_current => true
       @customer.spec_customer_info = new_info
       new_info.spec_customer_id.should == @customer.id
-      @info.is_current.should be_false
+      expect(@info.is_current).to eq false
     end
 
     it "should not crash on superseding with 'is_current' conditional constraint" do
@@ -276,7 +276,7 @@ describe Moribus do
         expect{ @customer.save }.to change(@info, :spec_person_name_id)
         @info.id.should_not == old_id
         @info.is_current.should == true
-        SpecCustomerInfo.find(old_id).is_current.should be_false
+        expect(SpecCustomerInfo.find(old_id).is_current).to eq false
       end
     end
   end
