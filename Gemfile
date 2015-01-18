@@ -3,10 +3,13 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in moribus.gemspec
 gemspec
 
+group :development, :test do
+  gem "pry"
+end
+
 group :development do
   gem "redcarpet"
   gem "yard"
-  gem "pry"
 end
 
 group :test do
