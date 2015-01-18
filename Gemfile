@@ -5,6 +5,7 @@ gemspec
 
 group :development, :test do
   gem "pry"
+  gem "pry-nav"
 end
 
 group :development do
