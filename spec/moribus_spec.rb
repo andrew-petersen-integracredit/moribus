@@ -102,9 +102,9 @@ describe Moribus do
         }.not_to change(SpecCustomerInfo, :count)
       end
       expect(@info.new_record?).to eq false
-      @info.id.should == old_id
-      @info.updated_at.should == old_updated_at
-      @info.created_at.should == old_created_at
+      expect(@info.id         ).to eq old_id
+      expect(@info.updated_at ).to eq old_updated_at
+      expect(@info.created_at ).to eq old_created_at
     end
   end
 
@@ -140,7 +140,7 @@ describe Moribus do
     it "should lookup self and replace id with existing on create" do
       name = SpecPersonName.new :first_name => 'John', :last_name => 'Smith'
       name.save
-      name.id.should == @existing.id
+      expect(name.id).to eq @existing.id
     end
 
     it "should create a new record if lookup fails" do
@@ -152,7 +152,7 @@ describe Moribus do
     it "should lookup self and replace id with existing on update" do
       name = SpecPersonName.create :first_name => 'Alice', :last_name => 'Smith'
       name.update_attributes :first_name => 'John'
-      name.id.should == @existing.id
+      expect(name.id).to eq @existing.id
     end
 
     context "with caching" do
@@ -164,7 +164,7 @@ describe Moribus do
       it "should lookup the existing value and add it to the cache" do
         feature = SpecCustomerFeature.new :feature_name => @existing.feature_name
         expect{ feature.save }.to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
-        feature.id.should == @existing.id
+        expect(feature.id).to eq @existing.id
       end
 
       it "should add the freshly-created record to the cache" do
@@ -173,12 +173,12 @@ describe Moribus do
 
       it "should freeze the cached object" do
         feature = SpecCustomerFeature.create(:feature_name => 'Cancelled')
-        SpecCustomerFeature.aggregated_records_cache[feature.feature_name].should be_frozen
+        expect(SpecCustomerFeature.aggregated_records_cache[feature.feature_name]).to be_frozen
       end
 
       it "should cache the clone of the record, not the record itself" do
         feature = SpecCustomerFeature.create(:feature_name => 'Returned')
-        SpecCustomerFeature.aggregated_records_cache[feature.feature_name].object_id.should_not == feature.object_id
+        expect(SpecCustomerFeature.aggregated_records_cache[feature.feature_name].object_id).not_to eq feature.object_id
       end
     end
   end
@@ -198,7 +198,7 @@ describe Moribus do
     it "should replace itself with new id" do
       old_id = @info.id
       @info.update_attributes(:spec_person_name_id => 2)
-      @info.id.should_not == old_id
+      expect(@info.id).not_to eq old_id
     end
 
     it "should set is_current record to false for superseded record" do
@@ -210,14 +210,14 @@ describe Moribus do
     it "should set previous_id to the id of the previous record" do
       old_id = @info.id
       @info.update_attributes(:spec_person_name_id => 2)
-      @info.previous_id.should == old_id
+      expect(@info.previous_id).to eq old_id
     end
 
     it "assigning a new current record should change is_current to false for previous one" do
       new_info = SpecCustomerInfo.new :spec_person_name_id => 2, :is_current => true
       @customer.spec_customer_info = new_info
-      new_info.spec_customer_id.should == @customer.id
-      expect(@info.is_current).to eq false
+      expect(new_info.spec_customer_id).to eq @customer.id
+      expect(@info.is_current         ).to eq false
     end
 
     it "should not crash on superseding with 'is_current' conditional constraint" do
@@ -234,14 +234,14 @@ describe Moribus do
 
       it "should be updated on change" do
         info = @customer.create_spec_customer_info :spec_person_name_id => 1
-        info.updated_at.should == first_time
-        info.created_at.should == first_time
+        expect(info.updated_at).to eq first_time
+        expect(info.created_at).to eq first_time
 
         Timecop.freeze(second_time)
         info.spec_person_name_id = 2
         info.save!
-        info.updated_at.should == second_time
-        info.created_at.should == second_time
+        expect(info.updated_at).to eq second_time
+        expect(info.created_at).to eq second_time
       end
     end
 
@@ -274,8 +274,8 @@ describe Moribus do
         old_id = @info.id
         @customer.spec_customer_info.spec_person_name.first_name = 'Alice'
         expect{ @customer.save }.to change(@info, :spec_person_name_id)
-        @info.id.should_not == old_id
-        @info.is_current.should == true
+        expect(@info.id).not_to eq old_id
+        expect(@info.is_current).to eq true
         expect(SpecCustomerInfo.find(old_id).is_current).to eq false
       end
     end
@@ -290,39 +290,39 @@ describe Moribus do
     end
 
     it "should have delegated column information" do
-      @customer.column_for_attribute(:first_name).should_not be_nil
+      expect(@customer.column_for_attribute(:first_name)).not_to be_nil
     end
 
     it "should not delegate special methods" do
-      @customer.should_not respond_to(:reset_first_name)
-      @customer.should_not respond_to(:first_name_was)
-      @customer.should_not respond_to(:first_name_before_type_cast)
-      @customer.should_not respond_to(:first_name_will_change!)
-      @customer.should_not respond_to(:first_name_changed?)
-      @customer.should_not respond_to(:lock_version)
+      expect(@customer).not_to respond_to(:reset_first_name)
+      expect(@customer).not_to respond_to(:first_name_was)
+      expect(@customer).not_to respond_to(:first_name_before_type_cast)
+      expect(@customer).not_to respond_to(:first_name_will_change!)
+      expect(@customer).not_to respond_to(:first_name_changed?)
+      expect(@customer).not_to respond_to(:lock_version)
     end
 
     it "should delegate methods to aggregated parts" do
-      @info.should respond_to(:first_name)
-      @info.should respond_to(:first_name=)
-      @info.should respond_to(:spec_suffix)
-      @info.last_name.should == 'Smith'
+      expect(@info).to respond_to(:first_name)
+      expect(@info).to respond_to(:first_name=)
+      expect(@info).to respond_to(:spec_suffix)
+      expect(@info.last_name).to eq 'Smith'
     end
 
     it "should delegate methods to representation" do
-      @customer.should respond_to(:first_name)
-      @customer.should respond_to(:first_name=)
-      @customer.should respond_to(:spec_suffix)
-      @customer.last_name.should == 'Smith'
-      @customer.should respond_to(:custom_field)
-      @customer.should respond_to(:custom_field=)
+      expect(@customer).to respond_to(:first_name)
+      expect(@customer).to respond_to(:first_name=)
+      expect(@customer).to respond_to(:spec_suffix)
+      expect(@customer.last_name).to eq 'Smith'
+      expect(@customer).to respond_to(:custom_field)
+      expect(@customer).to respond_to(:custom_field=)
     end
 
     it 'should properly delegate enumerated attributes' do
-      @customer.should respond_to(:spec_type)
-      @customer.should respond_to(:spec_type=)
+      expect(@customer).to respond_to(:spec_type)
+      expect(@customer).to respond_to(:spec_type=)
       @customer.spec_type = :important
-      @customer.spec_type.should === :important
+      expect(@customer.spec_type === :important).to eq true
     end
 
     it "should raise NoMethodError if unknown method received" do

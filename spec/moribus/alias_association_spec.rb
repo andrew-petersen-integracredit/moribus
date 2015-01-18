@@ -38,51 +38,51 @@ describe Moribus::AliasAssociation do
 
   describe "reflection aliasing" do
     it "alias association name in reflections" do
-      SpecPost.reflect_on_association(:author).should_not be_nil
+      expect(SpecPost.reflect_on_association(:author)).not_to be_nil
     end
 
     it "should not raise error when using aliased name in scopes" do
       expect{
         SpecPost.includes(:comments).first
-      }.to_not raise_error
+      }.not_to raise_error
     end
   end
 
   describe "association accessor alias methods" do
     subject{ @post }
 
-    it{ should respond_to :author }
-    it{ should respond_to :author= }
-    it{ should respond_to :comments }
-    it{ should respond_to :comments= }
-    it{ should respond_to :post_info }
-    it{ should respond_to :post_info= }
+    it{ is_expected.to respond_to :author }
+    it{ is_expected.to respond_to :author= }
+    it{ is_expected.to respond_to :comments }
+    it{ is_expected.to respond_to :comments= }
+    it{ is_expected.to respond_to :post_info }
+    it{ is_expected.to respond_to :post_info= }
   end
 
   describe "singular association alias method" do
     subject{ @post }
 
-    it{ should respond_to :build_author }
-    it{ should respond_to :create_author }
-    it{ should respond_to :create_author! }
+    it{ is_expected.to respond_to :build_author }
+    it{ is_expected.to respond_to :create_author }
+    it{ is_expected.to respond_to :create_author! }
 
-    it{ should respond_to :build_post_info }
-    it{ should respond_to :create_post_info }
-    it{ should respond_to :create_post_info! }
+    it{ is_expected.to respond_to :build_post_info }
+    it{ is_expected.to respond_to :create_post_info }
+    it{ is_expected.to respond_to :create_post_info! }
   end
 
   describe "collection association alias method" do
     subject{ @post }
 
-    it{ should respond_to :comment_ids }
-    it{ should respond_to :comment_ids= }
+    it{ is_expected.to respond_to :comment_ids }
+    it{ is_expected.to respond_to :comment_ids= }
   end
 
   describe ":alias => alias_name shortcuts" do
     subject{ @post }
 
-    it { should respond_to :creator }
-    it { should respond_to :remarks }
-    it { should respond_to :information }
+    it { is_expected.to respond_to :creator }
+    it { is_expected.to respond_to :remarks }
+    it { is_expected.to respond_to :information }
   end
 end
