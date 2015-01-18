@@ -77,14 +77,15 @@ module Moribus
 
     # Generate SQL statement to be used to update 'is_current' state of record to false.
     def current_to_false_sql_statement
-      klass          = self.class
-      is_current_col = klass.columns.detect{|c| c.name == "is_current" }
-      lock_col       = klass.locking_column
-      lock_value     = respond_to?(lock_col) && send(lock_col).to_i
+      klass           = self.class
+      is_current_col  = klass.columns.detect{|c| c.name == "is_current" }
+      lock_col        = klass.locking_column
+      lock_value      = respond_to?(lock_col) && send(lock_col).to_i
+      quoted_lock_col = klass.connection.quote_column_name(lock_col)
       "UPDATE #{klass.quoted_table_name} SET \"is_current\" = #{klass.quote_value(false, is_current_col)} ".tap do |sql|
-        sql << ", #{klass.quoted_locking_column} = #{klass.quote_value(lock_value + 1, lock_col)} " if lock_value
+        sql << ", #{quoted_lock_col} = #{klass.quote_value(lock_value + 1, lock_col)} " if lock_value
         sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_before_to_new_record_values[:id], "id")} "
-        sql << "AND #{klass.quoted_locking_column} = #{klass.quote_value(lock_value, lock_col)}" if lock_value
+        sql << "AND #{quoted_lock_col} = #{klass.quote_value(lock_value, lock_col)}" if lock_value
       end
     end
     private :current_to_false_sql_statement
