@@ -19,11 +19,17 @@ module Moribus
 
     # Class methods for ActiveRecord::Base
     module ClassMethods
-      # Aliases association reflection in reflections hash and
-      # association-specific methods. See module description for example
+      # Aliases association reflection in ActiveRecord's (internal) reflections hash and
+      # association-specific methods. See module description for example.
       def alias_association(alias_name, association_name)
         if reflection = reflect_on_association(association_name)
-          reflections[alias_name] = reflections[association_name]
+          # Use Rails 4.1.x+ behavior, if available:
+          if ActiveRecord::Reflection.respond_to? :add_reflection then
+            ActiveRecord::Reflection.add_reflection self, alias_name, reflection
+          else
+            # Rails 4.0.x behavior:
+            reflections[alias_name] = reflection
+          end
           alias_association_methods(alias_name, reflection)
           reflection
         end

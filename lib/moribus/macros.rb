@@ -92,6 +92,8 @@ module Moribus
       end
 
       reflection = has_one(name, scope, options)
+      # Rails 4.1 compatibility fix:
+      reflection = reflection[name] if reflection.respond_to? :[]
       reflection.options[:is_current] = true
       accepts_nested_attributes_for name
       define_effective_reader_for name
@@ -106,6 +108,8 @@ module Moribus
     # Extensions::HasAggregatedExtension)
     def has_aggregated(name, options = {})
       reflection = belongs_to(name, options)
+      # Rails 4.1 compatibility fix:
+      reflection = reflection[name] if reflection.respond_to? :[]
       reflection.options[:aggregated] = true
       accepts_nested_attributes_for name
       define_effective_reader_for name
