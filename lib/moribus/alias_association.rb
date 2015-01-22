@@ -28,7 +28,7 @@ module Moribus
             ActiveRecord::Reflection.add_reflection self, alias_name, reflection
           else
             # Rails 4.0.x behavior:
-            reflections[alias_name] = reflection
+            reflections[alias_name] = reflections[association_name]
           end
           alias_association_methods(alias_name, reflection)
           reflection

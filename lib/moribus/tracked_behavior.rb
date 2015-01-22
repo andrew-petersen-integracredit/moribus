@@ -77,15 +77,22 @@ module Moribus
 
     # Generate SQL statement to be used to update 'is_current' state of record to false.
     def current_to_false_sql_statement
-      klass           = self.class
-      is_current_col  = klass.columns.detect{|c| c.name == "is_current" }
-      lock_col        = klass.locking_column
-      lock_value      = respond_to?(lock_col) && send(lock_col).to_i
-      quoted_lock_col = klass.connection.quote_column_name(lock_col)
+      klass              = self.class
+      is_current_col     = klass.columns.detect { |c| c.name == "is_current" }
+      lock_column_name   = klass.locking_column
+      lock_value         = respond_to?(lock_column_name) && send(lock_column_name).to_i
+      lock_column        = if lock_value
+                             klass.columns.detect { |c| c.name == lock_column_name }
+                           else
+                             nil
+                           end
+      id_column          = klass.columns.detect { |c| c.name == klass.primary_key }
+      quoted_lock_column = klass.connection.quote_column_name(lock_column_name)
+
       "UPDATE #{klass.quoted_table_name} SET \"is_current\" = #{klass.quote_value(false, is_current_col)} ".tap do |sql|
-        sql << ", #{quoted_lock_col} = #{klass.quote_value(lock_value + 1, lock_col)} " if lock_value
-        sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_before_to_new_record_values[:id], "id")} "
-        sql << "AND #{quoted_lock_col} = #{klass.quote_value(lock_value, lock_col)}" if lock_value
+        sql << ", #{quoted_lock_column} = #{klass.quote_value(lock_value + 1, lock_column)} " if lock_value
+        sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_before_to_new_record_values[:id], id_column)} "
+        sql << "AND #{quoted_lock_column} = #{klass.quote_value(lock_value, lock_column)}" if lock_value
       end
     end
     private :current_to_false_sql_statement
