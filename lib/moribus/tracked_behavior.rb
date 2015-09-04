@@ -29,7 +29,10 @@ module Moribus
         begin
           # SQL UPDATE statement is executed in first place to prevent
           # crashing on uniqueness constraints with 'is_current' condition.
-          yield if update_current
+          if update_current
+            set_lock
+            yield
+          end
         ensure
           to_persistent! if new_record?
         end
@@ -51,12 +54,22 @@ module Moribus
     def update_current
       statement = current_to_false_sql_statement
       affected_rows = self.class.connection.update statement
+
       unless affected_rows == 1
         raise ActiveRecord::StaleObjectError.new(self, "update_current")
       end
       true
     end
     private :update_current
+
+    # Set incremental lock_version column
+    def set_lock
+      lock_column_name = self.class.locking_column
+      lock_value       = respond_to?(lock_column_name) && send(lock_column_name).to_i
+
+      send("#{lock_column_name}=", lock_value + 1) if respond_to?("#{lock_column_name}=")
+    end
+    private :set_lock
 
     # Generate an arel statement to update the 'is_current' state of the
     # record to false. And perform the very same actions AR does for record
@@ -76,23 +89,14 @@ module Moribus
     # private :current_to_false_arel_statement
 
     # Generate SQL statement to be used to update 'is_current' state of record to false.
+    # TODO: need to find way to track stale objects
     def current_to_false_sql_statement
-      klass              = self.class
-      is_current_col     = klass.columns.detect { |c| c.name == "is_current" }
-      lock_column_name   = klass.locking_column
-      lock_value         = respond_to?(lock_column_name) && send(lock_column_name).to_i
-      lock_column        = if lock_value
-                             klass.columns.detect { |c| c.name == lock_column_name }
-                           else
-                             nil
-                           end
-      id_column          = klass.columns.detect { |c| c.name == klass.primary_key }
-      quoted_lock_column = klass.connection.quote_column_name(lock_column_name)
+      klass          = self.class
+      is_current_col = klass.columns.detect { |c| c.name == "is_current" }
+      id_column      = klass.columns.detect { |c| c.name == klass.primary_key }
 
       "UPDATE #{klass.quoted_table_name} SET \"is_current\" = #{klass.quote_value(false, is_current_col)} ".tap do |sql|
-        sql << ", #{quoted_lock_column} = #{klass.quote_value(lock_value + 1, lock_column)} " if lock_value
         sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_before_to_new_record_values[:id], id_column)} "
-        sql << "AND #{quoted_lock_column} = #{klass.quote_value(lock_value, lock_column)}" if lock_value
       end
     end
     private :current_to_false_sql_statement
