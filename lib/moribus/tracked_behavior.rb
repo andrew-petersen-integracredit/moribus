@@ -65,9 +65,9 @@ module Moribus
     # Set incremental lock_version column
     def set_lock
       lock_column_name = self.class.locking_column
-      lock_value       = respond_to?(lock_column_name) && send(lock_column_name).to_i
+      lock_value       = has_attribute?(lock_column_name) && read_attribute(lock_column_name).to_i
 
-      send("#{lock_column_name}=", lock_value + 1) if respond_to?("#{lock_column_name}=")
+      write_attribute(lock_column_name, lock_value + 1) if has_attribute?(lock_column_name)
     end
     private :set_lock
 
@@ -91,12 +91,24 @@ module Moribus
     # Generate SQL statement to be used to update 'is_current' state of record to false.
     # TODO: need to find way to track stale objects
     def current_to_false_sql_statement
-      klass          = self.class
-      is_current_col = klass.columns.detect { |c| c.name == "is_current" }
-      id_column      = klass.columns.detect { |c| c.name == klass.primary_key }
+      klass              = self.class
+      is_current_col     = klass.columns.detect { |c| c.name == "is_current" }
+      lock_column_name   = klass.locking_column
+      lock_value         = has_attribute?(lock_column_name) && read_attribute(lock_column_name).to_i
+      lock_column        = if lock_value
+                             klass.columns.detect { |c| c.name == lock_column_name }
+                           else
+                             nil
+                           end
+      id_column          = klass.columns.detect { |c| c.name == klass.primary_key }
+      quoted_lock_column = klass.connection.quote_column_name(lock_column_name)
 
       "UPDATE #{klass.quoted_table_name} SET \"is_current\" = #{klass.quote_value(false, is_current_col)} ".tap do |sql|
         sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_before_to_new_record_values[:id], id_column)} "
+        if lock_value
+          sql << "AND \"is_current\" = #{klass.quote_value(true, is_current_col)}"
+          sql << "AND #{quoted_lock_column} = #{klass.quote_value(lock_value, lock_column)}"
+        end
       end
     end
     private :current_to_false_sql_statement
