@@ -37,6 +37,8 @@ module Moribus
           to_persistent! if new_record?
         end
       else
+        set_lock if new_record?
+
         yield
       end
     end
@@ -53,6 +55,7 @@ module Moribus
     # optimistic locking behavior.
     def update_current
       statement = current_to_false_sql_statement
+
       affected_rows = self.class.connection.update statement
 
       unless affected_rows == 1
@@ -64,10 +67,19 @@ module Moribus
 
     # Set incremental lock_version column
     def set_lock
-      lock_column_name = self.class.locking_column
-      lock_value       = has_attribute?(lock_column_name) && read_attribute(lock_column_name).to_i
+      klass = self.class
+      lock_column_name = klass.locking_column
 
-      write_attribute(lock_column_name, lock_value + 1) if has_attribute?(lock_column_name)
+      if has_attribute?(lock_column_name) && klass.parent_relation_keys.count > 0
+        criteria = klass.parent_relation_keys.inject({}) do |result, parent_key|
+          result[parent_key] = read_attribute(parent_key)
+          result
+        end
+
+        lock_value = klass.unscoped.where(criteria).count
+
+        write_attribute(lock_column_name, lock_value)
+      end
     end
     private :set_lock
 
@@ -104,10 +116,10 @@ module Moribus
       quoted_lock_column = klass.connection.quote_column_name(lock_column_name)
 
       "UPDATE #{klass.quoted_table_name} SET \"is_current\" = #{klass.quote_value(false, is_current_col)} ".tap do |sql|
-        sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_before_to_new_record_values[:id], id_column)} "
+        sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_before_to_new_record_values[:id], id_column)}"
         if lock_value
-          sql << "AND \"is_current\" = #{klass.quote_value(true, is_current_col)}"
-          sql << "AND #{quoted_lock_column} = #{klass.quote_value(lock_value, lock_column)}"
+          sql << " AND \"is_current\" = #{klass.quote_value(true, is_current_col)}"
+          sql << " AND #{quoted_lock_column} = #{klass.quote_value(lock_value, lock_column)}"
         end
       end
     end

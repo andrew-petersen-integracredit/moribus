@@ -22,6 +22,8 @@ module Moribus
 
   # :nodoc:
   module ClassMethods
+    attr_reader :parent_relation_keys
+
     # Adds aggregated behavior to a model.
     def acts_as_aggregated(options = {})
       options.symbolize_keys!
@@ -44,10 +46,11 @@ module Moribus
     def acts_as_tracked(options = {})
       options.symbolize_keys!
 
-      options.assert_valid_keys(:preceding_key)
+      options.assert_valid_keys(:preceding_key, :by)
       include TrackedBehavior
 
       @preceding_key_column = options[:preceding_key]
+      @parent_relation_keys = get_parent_relation_keys(options[:by])
     end
     private :acts_as_tracked
 
@@ -60,6 +63,22 @@ module Moribus
     def acts_as_tracked?
       self < TrackedBehavior
     end
+
+    # Return array of parent relation keys
+    # which is used for lock_version calculation
+    #
+    # @param parent [Symbol,Array<Symbol>]
+    # @return [Array<String>]
+    def get_parent_relation_keys(parent)
+      parents = Array(parent)
+
+      reflect_on_all_associations.inject([]) do |result, relation|
+        result << relation.foreign_key if parents.include?(relation.name)
+
+        result
+      end
+    end
+    private :get_parent_relation_keys
   end
 
   # Marks +self+ as a new record. Sets +id+ attribute to nil, but memorizes

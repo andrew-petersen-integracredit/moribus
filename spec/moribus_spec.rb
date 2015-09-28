@@ -58,11 +58,28 @@ describe Moribus do
       has_enumerated :spec_status
       has_enumerated :spec_type
 
-      acts_as_tracked :preceding_key => :previous_id
+      acts_as_tracked :by => :spec_customer, :preceding_key => :previous_id
+    end
+
+    class SpecCustomerInfoWithType < MoribusSpecModel( :spec_customer_id    => :integer!,
+                                        :spec_status_id      => :integer,
+                                        :spec_type_id        => :integer,
+                                        :is_current          => :boolean,
+                                        :lock_version        => :integer,
+                                        :created_at          => :datetime,
+                                        :updated_at          => :datetime)
+      attr :custom_field
+
+      belongs_to :spec_customer, :inverse_of => :spec_customer_info_with_type, :touch => true
+      has_enumerated :spec_status
+      has_enumerated :spec_type
+
+      acts_as_tracked :by => [:spec_customer, :spec_type]
     end
 
     class SpecCustomer < MoribusSpecModel(:spec_status_id => :integer)
       has_one_current :spec_customer_info, :inverse_of => :spec_customer
+      has_one_current :spec_customer_info_with_type, :inverse_of => :spec_customer
       has_enumerated :spec_status, :default => 'inactive'
 
       delegate_associated :spec_person_name, :custom_field, :spec_type, :to => :spec_customer_info
@@ -217,6 +234,7 @@ describe Moribus do
       new_info = SpecCustomerInfo.new :spec_person_name_id => 2, :is_current => true
       @customer.spec_customer_info = new_info
       expect(new_info.spec_customer_id).to eq @customer.id
+      @info.reload
       expect(@info.is_current         ).to eq false
     end
 
@@ -272,6 +290,35 @@ describe Moribus do
       it "should not fail if no locking_column present" do
         email = SpecCustomerEmail.create(:spec_customer_id => 1, :email => 'foo@bar.com')
         expect{ email.update_attributes(:email => 'foo2@bar.com') }.not_to raise_error
+      end
+
+      it "updates lock_version column based on parent relation" do
+        @other_customer = SpecCustomer.create
+        spec_customer_info = @customer.spec_customer_info
+
+        expect {
+          spec_customer_info.update_attributes(:spec_person_name_id => 3)
+        }.to change { spec_customer_info.lock_version }.from(0).to(1)
+
+        expect {
+          spec_customer_info.update_attributes(:spec_customer => @other_customer)
+        }.to change { spec_customer_info.lock_version }.from(1).to(0)
+      end
+
+      it "updates lock_version column base on relation list from 'by' option" do
+        info_with_type = @customer.reload.create_spec_customer_info_with_type(:spec_type => :important)
+        expect( info_with_type.lock_version ).to eq 0
+
+        other_info_with_type = @customer.reload.create_spec_customer_info_with_type(:spec_type => :unimportant)
+        expect( other_info_with_type.lock_version ).to eq 0
+
+        info_with_type.update_attributes(:spec_status => :active)
+        expect( info_with_type.lock_version ).to eq 1
+
+        info_with_type.update_attributes(:spec_status => :inactive)
+        expect( info_with_type.lock_version ).to eq 2
+
+        expect( other_info_with_type.lock_version ).to eq 0
       end
     end
 
