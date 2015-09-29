@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Moribus do
   before do
@@ -6,29 +6,29 @@ describe Moribus do
       acts_as_enumerated
 
       self.enumeration_model_updates_permitted = true
-      create!(:name => 'inactive', :description => 'Inactive')
-      create!(:name => 'active', :description => 'Active')
+      create!(:name => "inactive", :description => "Inactive")
+      create!(:name => "active"  , :description => "Active")
     end
 
     class SpecType < MoribusSpecModel(:name => :string, :description => :string)
       acts_as_enumerated
 
       self.enumeration_model_updates_permitted = true
-      create!(:name => 'important', :description => 'Important')
-      create!(:name => 'unimportant', :description => 'Unimportant')
+      create!(:name => "important"  , :description => "Important")
+      create!(:name => "unimportant", :description => "Unimportant")
     end
 
     class SpecSuffix < MoribusSpecModel(:name => :string, :description => :string)
       acts_as_enumerated
 
       self.enumeration_model_updates_permitted = true
-      create!(:name => 'none', :description => '')
-      create!(:name => 'jr', :description => 'Junior')
+      create!(:name => "none", :description => "")
+      create!(:name => "jr"  , :description => "Junior")
     end
 
     class SpecPersonName < MoribusSpecModel(:first_name => :string, :last_name => :string, :spec_suffix_id => :integer)
       acts_as_aggregated
-      has_enumerated :spec_suffix, :default => ''
+      has_enumerated :spec_suffix, :default => ""
 
       validates_presence_of :first_name, :last_name
 
@@ -42,7 +42,8 @@ describe Moribus do
       acts_as_aggregated :cache_by => :feature_name
     end
 
-    class SpecCustomerInfo < MoribusSpecModel( :spec_customer_id    => :integer!,
+    class SpecCustomerInfo < MoribusSpecModel(
+                                        :spec_customer_id    => :integer!,
                                         :spec_person_name_id => :integer,
                                         :spec_status_id      => :integer,
                                         :spec_type_id        => :integer,
@@ -50,7 +51,8 @@ describe Moribus do
                                         :lock_version        => :integer,
                                         :created_at          => :datetime,
                                         :updated_at          => :datetime,
-                                        :previous_id         => :integer )
+                                        :previous_id         => :integer
+                              )
       attr :custom_field
 
       belongs_to :spec_customer, :inverse_of => :spec_customer_info, :touch => true
@@ -61,13 +63,15 @@ describe Moribus do
       acts_as_tracked :by => :spec_customer, :preceding_key => :previous_id
     end
 
-    class SpecCustomerInfoWithType < MoribusSpecModel( :spec_customer_id    => :integer!,
+    class SpecCustomerInfoWithType < MoribusSpecModel(
+                                        :spec_customer_id    => :integer!,
                                         :spec_status_id      => :integer,
                                         :spec_type_id        => :integer,
                                         :is_current          => :boolean,
                                         :lock_version        => :integer,
                                         :created_at          => :datetime,
-                                        :updated_at          => :datetime)
+                                        :updated_at          => :datetime
+                                      )
       attr :custom_field
 
       belongs_to :spec_customer, :inverse_of => :spec_customer_info_with_type, :touch => true
@@ -80,7 +84,7 @@ describe Moribus do
     class SpecCustomer < MoribusSpecModel(:spec_status_id => :integer)
       has_one_current :spec_customer_info, :inverse_of => :spec_customer
       has_one_current :spec_customer_info_with_type, :inverse_of => :spec_customer
-      has_enumerated :spec_status, :default => 'inactive'
+      has_enumerated :spec_status, :default => "inactive"
 
       delegate_associated :spec_person_name, :custom_field, :spec_type, :to => :spec_customer_info
     end
@@ -101,18 +105,19 @@ describe Moribus do
   describe "common behavior" do
     before do
       @info = SpecCustomerInfo.create(
-        :spec_customer_id => 1,
+        :spec_customer_id    => 1,
         :spec_person_name_id => 1,
-        :is_current => true,
-        :created_at => 5.days.ago,
-        :updated_at => 5.days.ago
+        :is_current          => true,
+        :created_at          => 5.days.ago,
+        :updated_at          => 5.days.ago
       )
     end
 
     it "should revert changes if exception is raised" do
-      old_id = @info.id
+      old_id         = @info.id
       old_updated_at = @info.updated_at
       old_created_at = @info.created_at
+
       suppress(Exception) do
         expect {
           @info.update_attributes :spec_customer_id => nil, :spec_person_name_id => 2
@@ -125,7 +130,7 @@ describe Moribus do
     end
   end
 
-  describe 'Aggregated' do
+  describe "Aggregated" do
     context "definition" do
       it "should raise an error on an unknown option" do
         expect{
@@ -145,62 +150,67 @@ describe Moribus do
     end
 
     before do
-      @existing = SpecPersonName.create! :first_name => 'John', :last_name => 'Smith'
+      @existing = SpecPersonName.create! :first_name => "John", :last_name => "Smith"
     end
 
     it "should not duplicate records" do
       expect {
-        SpecPersonName.create :first_name => ' John ', :last_name => 'Smith'
+        SpecPersonName.create :first_name => " John ", :last_name => "Smith"
       }.not_to change(SpecPersonName, :count)
     end
 
     it "should lookup self and replace id with existing on create" do
-      name = SpecPersonName.new :first_name => 'John', :last_name => 'Smith'
+      name = SpecPersonName.new :first_name => "John", :last_name => "Smith"
       name.save
       expect(name.id).to eq @existing.id
     end
 
     it "should create a new record if lookup fails" do
       expect {
-        SpecPersonName.create :first_name => 'Alice', :last_name => 'Smith'
+        SpecPersonName.create :first_name => "Alice", :last_name => "Smith"
       }.to change(SpecPersonName, :count).by(1)
     end
 
     it "should lookup self and replace id with existing on update" do
-      name = SpecPersonName.create :first_name => 'Alice', :last_name => 'Smith'
-      name.update_attributes :first_name => 'John'
+      name = SpecPersonName.create :first_name => "Alice", :last_name => "Smith"
+      name.update_attributes :first_name => "John"
       expect(name.id).to eq @existing.id
     end
 
     context "with caching" do
       before do
-        @existing = SpecCustomerFeature.create(:feature_name => 'Pays')
+        @existing = SpecCustomerFeature.create(:feature_name => "Pays")
         SpecCustomerFeature.clear_cache
       end
 
       it "should lookup the existing value and add it to the cache" do
         feature = SpecCustomerFeature.new :feature_name => @existing.feature_name
-        expect{ feature.save }.to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
+
+        expect{ feature.save }.
+          to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
+
         expect(feature.id).to eq @existing.id
       end
 
       it "should add the freshly-created record to the cache" do
-        expect{ SpecCustomerFeature.create(:feature_name => 'Fraud') }.to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
+        expect{ SpecCustomerFeature.create(:feature_name => "Fraud") }.
+          to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
       end
 
       it "should freeze the cached object" do
-        feature = SpecCustomerFeature.create(:feature_name => 'Cancelled')
+        feature = SpecCustomerFeature.create(:feature_name => "Cancelled")
         expect(SpecCustomerFeature.aggregated_records_cache[feature.feature_name]).to be_frozen
       end
 
       it "should cache the clone of the record, not the record itself" do
-        feature = SpecCustomerFeature.create(:feature_name => 'Returned')
-        expect(SpecCustomerFeature.aggregated_records_cache[feature.feature_name].object_id).not_to eq feature.object_id
+        feature = SpecCustomerFeature.create(:feature_name => "Returned")
+        expect(SpecCustomerFeature.aggregated_records_cache[feature.feature_name].object_id).
+          not_to eq feature.object_id
       end
     end
   end
 
-  describe 'Tracked' do
+  describe "Tracked" do
     before do
       @customer = SpecCustomer.create
       @info = @customer.create_spec_customer_info :spec_person_name_id => 1
@@ -238,14 +248,18 @@ describe Moribus do
       expect(@info.is_current         ).to eq false
     end
 
-    it "should not crash on superseding with 'is_current' conditional constraint" do
-      email = SpecCustomerEmail.create(:spec_customer => @customer, :email => 'foo@bar.com', :status => 'unverified', :is_current => true)
-      expect{ email.update_attributes(:status => 'verified') }.not_to raise_error
+    it "should not crash on superseding with "is_current" conditional constraint" do
+      email = SpecCustomerEmail.create( :spec_customer => @customer,
+                                        :email         => "foo@bar.com",
+                                        :status        => "unverified",
+                                        :is_current    => true
+                                      )
+      expect{ email.update_attributes(:status => "verified") }.not_to raise_error
     end
 
-    describe 'updated_at and created_at' do
-      let(:first_time)  { Time.zone.parse('2012-07-16 00:00:00') }
-      let(:second_time) { Time.zone.parse('2012-07-17 08:10:15') }
+    describe "updated_at and created_at" do
+      let(:first_time)  { Time.zone.parse("2012-07-16 00:00:00") }
+      let(:second_time) { Time.zone.parse("2012-07-17 08:10:15") }
 
       before { Timecop.freeze(first_time) }
       after  { Timecop.return             }
@@ -288,8 +302,8 @@ describe Moribus do
       end
 
       it "should not fail if no locking_column present" do
-        email = SpecCustomerEmail.create(:spec_customer_id => 1, :email => 'foo@bar.com')
-        expect{ email.update_attributes(:email => 'foo2@bar.com') }.not_to raise_error
+        email = SpecCustomerEmail.create(:spec_customer_id => 1, :email => "foo@bar.com")
+        expect{ email.update_attributes(:email => "foo2@bar.com") }.not_to raise_error
       end
 
       it "updates lock_version column based on parent relation" do
@@ -306,10 +320,14 @@ describe Moribus do
       end
 
       it "updates lock_version column base on relation list from 'by' option" do
-        info_with_type = @customer.reload.create_spec_customer_info_with_type(:spec_type => :important)
+        info_with_type =
+          @customer.reload.create_spec_customer_info_with_type(:spec_type => :important)
+
         expect( info_with_type.lock_version ).to eq 0
 
-        other_info_with_type = @customer.reload.create_spec_customer_info_with_type(:spec_type => :unimportant)
+        other_info_with_type =
+          @customer.reload.create_spec_customer_info_with_type(:spec_type => :unimportant)
+
         expect( other_info_with_type.lock_version ).to eq 0
 
         info_with_type.update_attributes(:spec_status => :active)
@@ -322,16 +340,16 @@ describe Moribus do
       end
     end
 
-    describe 'with Aggregated' do
+    describe "with Aggregated" do
       before do
-        @info.spec_person_name = SpecPersonName.create(:first_name => 'John', :last_name => 'Smith')
+        @info.spec_person_name = SpecPersonName.create(:first_name => "John", :last_name => "Smith")
         @info.save
         @info.reload
       end
 
       it "should supersede when nested record changes" do
         old_id = @info.id
-        @customer.spec_customer_info.spec_person_name.first_name = 'Alice'
+        @customer.spec_customer_info.spec_person_name.first_name = "Alice"
         expect{ @customer.save }.to change(@info, :spec_person_name_id)
         expect(@info.id).not_to eq old_id
         expect(@info.is_current).to eq true
@@ -340,11 +358,11 @@ describe Moribus do
     end
   end
 
-  describe 'Delegations' do
+  describe "Delegations" do
     before do
       @customer = SpecCustomer.create(
         :spec_customer_info_attributes => {
-          :spec_person_name_attributes => {:first_name => ' John ', :last_name => 'Smith'} } )
+          :spec_person_name_attributes => {:first_name => " John ", :last_name => "Smith"} } )
       @info = @customer.spec_customer_info
     end
 
@@ -365,19 +383,19 @@ describe Moribus do
       expect(@info).to respond_to(:first_name)
       expect(@info).to respond_to(:first_name=)
       expect(@info).to respond_to(:spec_suffix)
-      expect(@info.last_name).to eq 'Smith'
+      expect(@info.last_name).to eq "Smith"
     end
 
     it "should delegate methods to representation" do
       expect(@customer).to respond_to(:first_name)
       expect(@customer).to respond_to(:first_name=)
       expect(@customer).to respond_to(:spec_suffix)
-      expect(@customer.last_name).to eq 'Smith'
+      expect(@customer.last_name).to eq "Smith"
       expect(@customer).to respond_to(:custom_field)
       expect(@customer).to respond_to(:custom_field=)
     end
 
-    it 'should properly delegate enumerated attributes' do
+    it "should properly delegate enumerated attributes" do
       expect(@customer).to respond_to(:spec_type)
       expect(@customer).to respond_to(:spec_type=)
       @customer.spec_type = :important

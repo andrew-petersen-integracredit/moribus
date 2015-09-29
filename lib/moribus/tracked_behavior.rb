@@ -65,7 +65,7 @@ module Moribus
     end
     private :update_current
 
-    # Set incremental lock_version column
+    # Set incremental lock_version column.
     def set_lock
       klass = self.class
       lock_column_name = klass.locking_column
@@ -115,8 +115,11 @@ module Moribus
       id_column          = klass.columns.detect { |c| c.name == klass.primary_key }
       quoted_lock_column = klass.connection.quote_column_name(lock_column_name)
 
-      "UPDATE #{klass.quoted_table_name} SET \"is_current\" = #{klass.quote_value(false, is_current_col)} ".tap do |sql|
-        sql << "WHERE #{klass.quoted_primary_key} = #{klass.quote_value(@_before_to_new_record_values[:id], id_column)}"
+      "UPDATE #{klass.quoted_table_name} " \
+      "SET \"is_current\" = #{klass.quote_value(false, is_current_col)} ".tap do |sql|
+        sql << "WHERE #{klass.quoted_primary_key} = " \
+               "#{klass.quote_value(@_before_to_new_record_values[:id], id_column)}"
+
         if lock_value
           sql << " AND \"is_current\" = #{klass.quote_value(true, is_current_col)}"
           sql << " AND #{quoted_lock_column} = #{klass.quote_value(lock_value, lock_column)}"

@@ -64,8 +64,7 @@ module Moribus
       self < TrackedBehavior
     end
 
-    # Return array of parent relation keys
-    # which is used for lock_version calculation
+    # Return array of parent relation foreign keys, which is used for lock_version calculation.
     #
     # @param parent [Symbol,Array<Symbol>]
     # @return [Array<String>]
