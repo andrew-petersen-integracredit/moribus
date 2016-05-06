@@ -92,8 +92,7 @@ module Moribus
       end
 
       reflection = has_one(name, scope, options)
-      # Rails 4.1 compatibility fix:
-      reflection = reflection["#{name}"] if reflection.respond_to? :[]
+      reflection = normalize_reflection(reflection, name)
       reflection.options[:is_current] = true
       accepts_nested_attributes_for name
       define_effective_reader_for name
@@ -108,8 +107,7 @@ module Moribus
     # Extensions::HasAggregatedExtension)
     def has_aggregated(name, options = {})
       reflection = belongs_to(name, options)
-      # Rails 4.1 compatibility fix:
-      reflection = reflection["#{name}"] if reflection.respond_to? :[]
+      reflection = normalize_reflection(reflection, name)
       reflection.options[:aggregated] = true
       accepts_nested_attributes_for name
       define_effective_reader_for name
@@ -117,6 +115,20 @@ module Moribus
       reflection
     end
     private :has_aggregated
+
+    # Normalize reflection for Rails 4.1/4.2.
+    def normalize_reflection(reflection, name)
+      return reflection unless reflection.respond_to? :[]
+
+      if reflection.has_key?(name)
+        # Rails 4.1
+        reflection[name]
+      else
+        # Rails 4.2
+        reflection["#{name}"]
+      end
+    end
+    private :normalize_reflection
 
     # Declare a reader that will build associated object if it does not exist.
     # We can actually extend an association's readers like:
