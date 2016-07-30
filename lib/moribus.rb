@@ -142,8 +142,16 @@ module Moribus
   # update them when new record is created.
   def reset_persistence_values
     self.id = nil
-    self.updated_at = nil if respond_to?(:updated_at=)
-    self.created_at = nil if respond_to?(:created_at=)
+
+    if respond_to?(:updated_at=)
+      self.updated_at = nil
+      @changed_attributes = ActiveSupport::HashWithIndifferentAccess.new(changed_attributes.dup.merge(updated_at: nil))
+    end
+
+    if respond_to?(:created_at=)
+      self.created_at = nil
+      @changed_attributes = ActiveSupport::HashWithIndifferentAccess.new(changed_attributes.dup.merge(created_at: nil))
+    end
 
     # mark all other attributes is changing
     (attributes.keys - changes.keys).each{ |key| self.send(:"#{key}_will_change!") }

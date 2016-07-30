@@ -130,10 +130,15 @@ describe Moribus do
           @info.update_attributes :spec_customer_id => nil, :spec_person_name_id => 2
         }.not_to change(SpecCustomerInfo, :count)
       end
+
       expect(@info.new_record?).to eq false
       expect(@info.id         ).to eq old_id
       expect(@info.updated_at ).to eq old_updated_at
       expect(@info.created_at ).to eq old_created_at
+
+      expect(@info.changed_attributes[:updated_at]).to eq(nil)
+      expect(@info.changed_attributes[:created_at]).to eq(nil)
+
     end
   end
 
