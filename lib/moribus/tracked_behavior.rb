@@ -59,7 +59,7 @@ module Moribus
       affected_rows = self.class.connection.update statement
 
       unless affected_rows == 1
-        raise ActiveRecord::StaleObjectError.new(self, "update_current")
+        raise ActiveRecord::StaleObjectError.new(self, "update_current (version #{current_lock_value})")
       end
       true
     end
@@ -106,7 +106,7 @@ module Moribus
       klass              = self.class
       is_current_col     = klass.columns.detect { |c| c.name == "is_current" }
       lock_column_name   = klass.locking_column
-      lock_value         = has_attribute?(lock_column_name) && read_attribute(lock_column_name).to_i
+      lock_value         = current_lock_value
       lock_column        = if lock_value
                              klass.columns.detect { |c| c.name == lock_column_name }
                            else
@@ -127,5 +127,12 @@ module Moribus
       end
     end
     private :current_to_false_sql_statement
+
+    # Returns the current value of the locking column is such exists
+    def current_lock_value
+      lock_column_name = self.class.locking_column
+      has_attribute?(lock_column_name) && read_attribute(lock_column_name).to_i
+    end
+    private :current_lock_value
   end
 end

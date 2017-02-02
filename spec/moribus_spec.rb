@@ -299,7 +299,8 @@ describe Moribus do
         @info1.update_attributes(:spec_person_name_id => 3)
 
         expect{ @info2.update_attributes(:spec_person_name_id => 4) }.
-          to raise_error(ActiveRecord::StaleObjectError)
+          to raise_error(ActiveRecord::StaleObjectError,
+                         "Attempted to update_current (version #{@info2.lock_version}) a stale object: SpecCustomerInfo")
       end
 
       it "updates lock_version incrementally for each new record" do
