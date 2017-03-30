@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.name        = "HornsAndHooves-moribus"
   s.version     = Moribus::VERSION
   s.authors     = ["HornsAndHooves", "Artem Kuzko", "Sergey Potapov"]
-  s.email       = ["a.kuzko@gmail.com", "blake131313@gmail.com"]
+  s.email       = ["arthur.shagall@gmail.com", "a.kuzko@gmail.com", "blake131313@gmail.com"]
   s.homepage    = "https://github.com/HornsAndHooves/moribus"
   s.licenses    = ["MIT"]
   s.summary     = %q{Introduces Aggregated and Tracked behavior to ActiveRecord::Base models}

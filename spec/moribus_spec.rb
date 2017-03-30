@@ -189,6 +189,14 @@ describe Moribus do
       expect(name.id).to eq @existing.id
     end
 
+    it "raises the expected error when 'save!' fails" do
+      name = SpecPersonName.create :first_name => "Alice", :last_name => "Smith"
+      name.last_name = nil
+      expect {
+        name.save!
+      }.to raise_error(ActiveRecord::RecordNotSaved)
+    end
+
     context "with caching" do
       before do
         @existing = SpecCustomerFeature.create(:feature_name => "Pays")
