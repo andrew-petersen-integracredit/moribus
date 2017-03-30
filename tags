@@ -1,0 +1,160 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AggregatedBehavior	lib/moribus/aggregated_behavior.rb	15;"	m	line:15	class:Moribus
+AggregatedCacheBehavior	lib/moribus/aggregated_cache_behavior.rb	20;"	m	line:20	class:Moribus
+AliasAssociation	lib/moribus/alias_association.rb	17;"	m	line:17	class:Moribus
+AllFiles	coverage/index.html	32;"	a	line:32
+Application	spec/dummy/config/application.rb	9;"	c	line:9	class:Dummy
+ApplicationController	spec/dummy/app/controllers/application_controller.rb	1;"	c	line:1
+ApplicationHelper	spec/dummy/app/helpers/application_helper.rb	1;"	m	line:1
+ClassMethods	lib/moribus.rb	24;"	m	line:24	class:Moribus
+ClassMethods	lib/moribus/aggregated_cache_behavior.rb	38;"	m	line:38	class:Moribus.AggregatedCacheBehavior
+ClassMethods	lib/moribus/alias_association.rb	21;"	m	line:21	class:Moribus.AliasAssociation
+ClassMethods	lib/moribus/extensions.rb	13;"	m	line:13	class:Moribus.Extensions
+ClassMethods	lib/moribus/tracked_behavior.rb	14;"	m	line:14	class:Moribus.TrackedBehavior
+ColorizedText	lib/colorized_text.rb	8;"	m	line:8
+DelegateAssociated	lib/moribus/extensions/delegate_associated.rb	8;"	m	line:8	class:Moribus.Extensions
+Dummy	spec/dummy/config/application.rb	8;"	m	line:8
+Extensions	lib/moribus/extensions.rb	4;"	m	line:4	class:Moribus
+Extensions	lib/moribus/extensions/delegate_associated.rb	2;"	m	line:2	class:Moribus
+Extensions	lib/moribus/extensions/has_aggregated_extension.rb	2;"	m	line:2	class:Moribus
+Extensions	lib/moribus/extensions/has_current_extension.rb	2;"	m	line:2	class:Moribus
+HasAggregatedExtension	lib/moribus/extensions/has_aggregated_extension.rb	5;"	m	line:5	class:Moribus.Extensions
+HasCurrentExtension	lib/moribus/extensions/has_current_extension.rb	5;"	m	line:5	class:Moribus.Extensions
+Helper	lib/moribus/extensions/has_aggregated_extension.rb	18;"	c	line:18	class:Moribus.Extensions.HasAggregatedExtension
+K.D	coverage/assets/0.10.0/application.js	17;"	f	line:17
+K.D	coverage/assets/0.8.0/application.js	17;"	f	line:17
+K.E	coverage/assets/0.10.0/application.js	17;"	f	line:17
+K.E	coverage/assets/0.8.0/application.js	17;"	f	line:17
+K.l	coverage/assets/0.10.0/application.js	17;"	f	line:17
+K.l	coverage/assets/0.8.0/application.js	17;"	f	line:17
+K.m	coverage/assets/0.10.0/application.js	17;"	f	line:17
+K.m	coverage/assets/0.8.0/application.js	17;"	f	line:17
+Macros	lib/moribus/macros.rb	4;"	m	line:4	class:Moribus
+Moribus	lib/moribus.rb	6;"	m	line:6
+Moribus	lib/moribus/aggregated_behavior.rb	1;"	m	line:1
+Moribus	lib/moribus/aggregated_cache_behavior.rb	1;"	m	line:1
+Moribus	lib/moribus/alias_association.rb	1;"	m	line:1
+Moribus	lib/moribus/extensions.rb	1;"	m	line:1
+Moribus	lib/moribus/extensions/delegate_associated.rb	1;"	m	line:1
+Moribus	lib/moribus/extensions/has_aggregated_extension.rb	1;"	m	line:1
+Moribus	lib/moribus/extensions/has_current_extension.rb	1;"	m	line:1
+Moribus	lib/moribus/macros.rb	1;"	m	line:1
+Moribus	lib/moribus/tracked_behavior.rb	1;"	m	line:1
+Moribus	lib/moribus/version.rb	1;"	m	line:1
+MoribusSpecModel	spec/support/moribus_spec_model.rb	26;"	f	line:26
+MoribusSpecModel	spec/support/moribus_spec_model.rb	2;"	m	line:2
+SpecAuthor	spec/moribus/alias_association_spec.rb	15;"	c	line:15
+SpecComment	spec/moribus/alias_association_spec.rb	23;"	c	line:23
+SpecCustomer	spec/moribus_spec.rb	87;"	c	line:87
+SpecCustomerEmail	spec/moribus_spec.rb	95;"	c	line:95
+SpecCustomerFeature	spec/moribus_spec.rb	44;"	c	line:44
+SpecCustomerInfo	spec/moribus_spec.rb	48;"	c	line:48
+SpecCustomerInfoWithType	spec/moribus_spec.rb	69;"	c	line:69
+SpecPersonName	spec/moribus_spec.rb	29;"	c	line:29
+SpecPost	spec/moribus/alias_association_spec.rb	5;"	c	line:5
+SpecPostInfo	spec/moribus/alias_association_spec.rb	19;"	c	line:19
+SpecStatus	spec/moribus_spec.rb	5;"	c	line:5
+SpecSuffix	spec/moribus_spec.rb	21;"	c	line:21
+SpecType	spec/moribus_spec.rb	13;"	c	line:13
+TrackedBehavior	lib/moribus/tracked_behavior.rb	8;"	m	line:8	class:Moribus
+V.N	coverage/assets/0.10.0/application.js	17;"	f	line:17
+V.N	coverage/assets/0.8.0/application.js	17;"	f	line:17
+acts_as_aggregated	lib/moribus.rb	28;"	f	line:28	class:Moribus.ClassMethods
+acts_as_aggregated?	lib/moribus.rb	58;"	f	line:58	class:Moribus.ClassMethods
+acts_as_tracked	lib/moribus.rb	46;"	f	line:46	class:Moribus.ClassMethods
+acts_as_tracked?	lib/moribus.rb	63;"	f	line:63	class:Moribus.ClassMethods
+add_delegated_methods	lib/moribus/extensions/has_aggregated_extension.rb	50;"	f	line:50	class:Moribus.Extensions.HasAggregatedExtension.Helper
+aggregated_caching_column	lib/moribus/aggregated_cache_behavior.rb	46;"	f	line:46	class:Moribus.AggregatedCacheBehavior.ClassMethods
+alias_association	lib/moribus/alias_association.rb	24;"	f	line:24	class:Moribus.AliasAssociation.ClassMethods
+alias_association_accessor_methods	lib/moribus/alias_association.rb	88;"	f	line:88	class:Moribus.AliasAssociation.ClassMethods
+alias_association_methods	lib/moribus/alias_association.rb	73;"	f	line:73	class:Moribus.AliasAssociation.ClassMethods
+alias_collection_association_methods	lib/moribus/alias_association.rb	108;"	f	line:108	class:Moribus.AliasAssociation.ClassMethods
+alias_singular_association_methods	lib/moribus/alias_association.rb	98;"	f	line:98	class:Moribus.AliasAssociation.ClassMethods
+association	lib/moribus/extensions.rb	24;"	f	line:24	class:Moribus.Extensions
+b$.bA	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bA	coverage/assets/0.8.0/application.js	17;"	f	line:17
+b$.bW	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bW	coverage/assets/0.8.0/application.js	17;"	f	line:17
+b$.bX	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bX	coverage/assets/0.8.0/application.js	17;"	f	line:17
+b$.bY	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bY	coverage/assets/0.8.0/application.js	17;"	f	line:17
+b$.bZ	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bZ	coverage/assets/0.8.0/application.js	17;"	f	line:17
+b$.bi	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bi	coverage/assets/0.8.0/application.js	17;"	f	line:17
+b$.bj	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bj	coverage/assets/0.8.0/application.js	17;"	f	line:17
+b$.bk	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bk	coverage/assets/0.8.0/application.js	17;"	f	line:17
+b$.bl	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bl	coverage/assets/0.8.0/application.js	17;"	f	line:17
+b$.bm	coverage/assets/0.10.0/application.js	17;"	f	line:17
+b$.bm	coverage/assets/0.8.0/application.js	17;"	f	line:17
+belongs_to	lib/moribus/alias_association.rb	39;"	f	line:39	class:Moribus.AliasAssociation.ClassMethods
+bh.bg	coverage/assets/0.10.0/application.js	17;"	f	line:17
+bh.bg	coverage/assets/0.8.0/application.js	17;"	f	line:17
+bold	lib/colorized_text.rb	30;"	f	line:30	class:ColorizedText
+cache_aggregated_record	lib/moribus/aggregated_cache_behavior.rb	63;"	f	line:63	class:Moribus.AggregatedCacheBehavior
+caching_attribute	lib/moribus/aggregated_cache_behavior.rb	71;"	f	line:71	class:Moribus.AggregatedCacheBehavior
+cleanup	spec/support/moribus_spec_model.rb	3;"	F	line:3	class:MoribusSpecModel
+clear_cache	lib/moribus/aggregated_cache_behavior.rb	40;"	f	line:40	class:Moribus.AggregatedCacheBehavior.ClassMethods
+colorize	lib/colorized_text.rb	10;"	f	line:10	class:ColorizedText
+column_for_attribute	lib/moribus/extensions/delegate_associated.rb	35;"	f	line:35	class:Moribus.Extensions.DelegateAssociated
+content_changed?	lib/moribus/tracked_behavior.rb	48;"	f	line:48	class:Moribus.TrackedBehavior
+cp.ce	coverage/assets/0.10.0/application.js	17;"	f	line:17
+cp.ce	coverage/assets/0.8.0/application.js	17;"	f	line:17
+cp.cf	coverage/assets/0.10.0/application.js	17;"	f	line:17
+cp.cf	coverage/assets/0.8.0/application.js	17;"	f	line:17
+current_lock_value	lib/moribus/tracked_behavior.rb	132;"	f	line:132
+current_to_false_sql_statement	lib/moribus/tracked_behavior.rb	105;"	f	line:105	class:Moribus.TrackedBehavior
+define_delegation_module	lib/moribus/extensions/has_aggregated_extension.rb	40;"	f	line:40	class:Moribus.Extensions.HasAggregatedExtension.Helper
+define_effective_reader_for	lib/moribus/macros.rb	144;"	f	line:144	class:Moribus.Macros
+delegate_associated	lib/moribus/macros.rb	51;"	f	line:51	class:Moribus.Macros
+effective_	lib/moribus/macros.rb	146;"	f	line:146	class:Moribus.Macros.define_effective_reader_for
+extend	lib/moribus/extensions/has_aggregated_extension.rb	32;"	f	line:32	class:Moribus.Extensions.HasAggregatedExtension.Helper
+extend_has_aggregated_reflection	lib/moribus/extensions.rb	16;"	f	line:16	class:Moribus.Extensions.ClassMethods
+first_name=	spec/moribus_spec.rb	39;"	f	line:39	class:SpecPersonName
+function.cr	coverage/assets/0.10.0/application.js	17;"	f	line:17
+function.cr	coverage/assets/0.8.0/application.js	17;"	f	line:17
+get_parent_relation_keys	lib/moribus.rb	71;"	f	line:71	class:Moribus.ClassMethods
+green	lib/colorized_text.rb	20;"	f	line:20	class:ColorizedText
+has_aggregated	lib/moribus/macros.rb	108;"	f	line:108	class:Moribus.Macros
+has_many	lib/moribus/alias_association.rb	49;"	f	line:49	class:Moribus.AliasAssociation.ClassMethods
+has_one	lib/moribus/alias_association.rb	59;"	f	line:59	class:Moribus.AliasAssociation.ClassMethods
+has_one_current	lib/moribus/macros.rb	78;"	f	line:78	class:Moribus.Macros
+include_delegation_module	lib/moribus/extensions/has_aggregated_extension.rb	81;"	f	line:81	class:Moribus.Extensions.HasAggregatedExtension.Helper
+initialize	lib/moribus/extensions/has_aggregated_extension.rb	26;"	f	line:26	class:Moribus.Extensions.HasAggregatedExtension.Helper
+k.function.J	coverage/assets/0.10.0/application.js	17;"	f	line:17
+k.function.J	coverage/assets/0.8.0/application.js	17;"	f	line:17
+k.var.e	coverage/assets/0.10.0/application.js	17;"	f	line:17
+k.var.e	coverage/assets/0.8.0/application.js	17;"	f	line:17
+lookup_relation	lib/moribus/aggregated_behavior.rb	72;"	f	line:72	class:Moribus.AggregatedBehavior
+lookup_self	lib/moribus/aggregated_behavior.rb	65;"	f	line:65	class:Moribus.AggregatedBehavior
+lookup_self	lib/moribus/aggregated_cache_behavior.rb	52;"	f	line:52	class:Moribus.AggregatedCacheBehavior
+lookup_self_and_replace	lib/moribus/aggregated_behavior.rb	79;"	f	line:79	class:Moribus.AggregatedBehavior
+methods_to_delegate_to	lib/moribus/extensions/has_aggregated_extension.rb	67;"	f	line:67	class:Moribus.Extensions.HasAggregatedExtension.Helper
+name	lib/moribus/extensions/has_aggregated_extension.rb	87;"	f	line:87	class:Moribus.Extensions.HasAggregatedExtension.Helper
+normalize_reflection	lib/moribus/macros.rb	120;"	f	line:120	class:Moribus.Macros
+raise_record_not_saved_error	lib/moribus/aggregated_behavior.rb	55;"	f	line:55	class:Moribus.AggregatedBehavior
+red	lib/colorized_text.rb	25;"	f	line:25	class:ColorizedText
+remove_target!	lib/moribus/extensions/has_current_extension.rb	8;"	f	line:8	class:Moribus.Extensions.HasCurrentExtension
+reset_persistence_values	lib/moribus.rb	143;"	f	line:143	class:Moribus
+restore_before_to_new_record_values	lib/moribus.rb	133;"	f	line:133	class:Moribus
+save	lib/moribus/aggregated_behavior.rb	29;"	f	line:29	class:Moribus.AggregatedBehavior
+save!	lib/moribus/aggregated_behavior.rb	50;"	f	line:50	class:Moribus.AggregatedBehavior
+set_lock	lib/moribus/tracked_behavior.rb	69;"	f	line:69	class:Moribus.TrackedBehavior
+set_parent	lib/moribus.rb	108;"	f	line:108	class:Moribus
+store_before_to_new_record_values	lib/moribus.rb	124;"	f	line:124	class:Moribus
+to_new_record!	lib/moribus.rb	85;"	f	line:85	class:Moribus
+to_persistent!	lib/moribus.rb	94;"	f	line:94	class:Moribus
+tracked_save_callback	lib/moribus/tracked_behavior.rb	25;"	f	line:25	class:Moribus.TrackedBehavior
+update_current	lib/moribus/tracked_behavior.rb	56;"	f	line:56	class:Moribus.TrackedBehavior
+updated?	lib/moribus/extensions/has_aggregated_extension.rb	10;"	f	line:10	class:Moribus.Extensions.HasAggregatedExtension
+updated_as_aggregated?	lib/moribus.rb	117;"	f	line:117	class:Moribus
+yellow	lib/colorized_text.rb	15;"	f	line:15	class:ColorizedText

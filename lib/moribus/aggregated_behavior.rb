@@ -48,8 +48,17 @@ module Moribus
 
     # Bang version of #save.
     def save!(*args)
-      save(*args) or raise ActiveRecord::RecordNotSaved
+      save(*args) or raise_record_not_saved_error
     end
+
+    # Raise "record not saved".
+    def raise_record_not_saved_error
+      args =
+        (Rails::VERSION::MAJOR == 4 && Rails::VERSION::MINOR < 2) ? [] : ["Failed to save record"]
+
+      raise ActiveRecord::RecordNotSaved, *args
+    end
+    private :raise_record_not_saved_error
 
     # Use the +lookup_relation+ to get the very first existing record that
     # corresponds to +self+.
