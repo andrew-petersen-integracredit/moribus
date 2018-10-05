@@ -27,10 +27,11 @@ describe Moribus do
     end
 
     class SpecPersonName < MoribusSpecModel(:first_name     => :string,
+                                            :middle_name    => :string,
                                             :last_name      => :string,
                                             :spec_suffix_id => :integer
                                           )
-      acts_as_aggregated
+      acts_as_aggregated :non_content_columns => :middle_name
       has_enumerated :spec_suffix, :default => ""
 
       validates_presence_of :first_name, :last_name
@@ -138,95 +139,11 @@ describe Moribus do
 
       expect(@info.changed_attributes[:updated_at]).to eq(nil)
       expect(@info.changed_attributes[:created_at]).to eq(nil)
-
-    end
-  end
-
-  describe "Aggregated" do
-    context "definition" do
-      it "should raise an error on an unknown option" do
-        expect{
-          Class.new(ActiveRecord::Base).class_eval do
-            acts_as_aggregated :invalid_key => :error
-          end
-        }.to raise_error(ArgumentError)
-      end
-
-      it "should raise an error when including AggregatedCacheBehavior without AggregatedBehavior" do
-        expect{
-          Class.new(ActiveRecord::Base).class_eval do
-            include Moribus::AggregatedCacheBehavior
-          end
-        }.to raise_error(Moribus::AggregatedCacheBehavior::NotAggregatedError)
-      end
     end
 
-    before do
-      @existing = SpecPersonName.create! :first_name => "John", :last_name => "Smith"
-    end
-
-    it "doesn't duplicate records" do
-      expect {
-        SpecPersonName.create :first_name => " John ", :last_name => "Smith"
-      }.not_to change(SpecPersonName, :count)
-    end
-
-    it "looks up self and replaces id with existing on create" do
-      name = SpecPersonName.new :first_name => "John", :last_name => "Smith"
-      name.save
-      expect(name.id).to eq @existing.id
-    end
-
-    it "creates a new record if lookup fails" do
-      expect {
-        SpecPersonName.create :first_name => "Alice", :last_name => "Smith"
-      }.to change(SpecPersonName, :count).by(1)
-    end
-
-    it "looks up self and replaces id with existing on update" do
-      name = SpecPersonName.create :first_name => "Alice", :last_name => "Smith"
-      name.update_attributes :first_name => "John"
-      expect(name.id).to eq @existing.id
-    end
-
-    it "raises the expected error when 'save!' fails" do
-      name = SpecPersonName.create :first_name => "Alice", :last_name => "Smith"
-      name.last_name = nil
-      expect {
-        name.save!
-      }.to raise_error(ActiveRecord::RecordNotSaved)
-    end
-
-    context "with caching" do
-      before do
-        @existing = SpecCustomerFeature.create(:feature_name => "Pays")
-        SpecCustomerFeature.clear_cache
-      end
-
-      it "looks up the existing value and adds it to the cache" do
-        feature = SpecCustomerFeature.new :feature_name => @existing.feature_name
-
-        expect{ feature.save }.
-          to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
-
-        expect(feature.id).to eq @existing.id
-      end
-
-      it "adds the freshly-created record to the cache" do
-        expect{ SpecCustomerFeature.create(:feature_name => "Fraud") }.
-          to change(SpecCustomerFeature.aggregated_records_cache, :length).by(1)
-      end
-
-      it "freezes the cached object" do
-        feature = SpecCustomerFeature.create(:feature_name => "Cancelled")
-        expect(SpecCustomerFeature.aggregated_records_cache[feature.feature_name]).to be_frozen
-      end
-
-      it "caches the clone of the record, not the record itself" do
-        feature = SpecCustomerFeature.create(:feature_name => "Returned")
-        expect(SpecCustomerFeature.aggregated_records_cache[feature.feature_name].object_id).
-          not_to eq feature.object_id
-      end
+    it "has module included class check methods" do
+      expect(SpecCustomerFeature.acts_as_aggregated?).to be_truthy
+      expect(SpecCustomerEmail.acts_as_tracked?).to be_truthy
     end
   end
 
@@ -378,55 +295,6 @@ describe Moribus do
         expect(@info.is_current).to eq true
         expect(SpecCustomerInfo.find(old_id).is_current).to eq false
       end
-    end
-  end
-
-  describe "Delegations" do
-    before do
-      @customer = SpecCustomer.create(
-        :spec_customer_info_attributes => {
-          :spec_person_name_attributes => {:first_name => " John ", :last_name => "Smith"} } )
-      @info = @customer.spec_customer_info
-    end
-
-    it "has delegated column information" do
-      expect(@customer.column_for_attribute(:first_name)).not_to be_nil
-    end
-
-    it "does not delegate special methods" do
-      expect(@customer).not_to respond_to(:reset_first_name)
-      expect(@customer).not_to respond_to(:first_name_was)
-      expect(@customer).not_to respond_to(:first_name_before_type_cast)
-      expect(@customer).not_to respond_to(:first_name_will_change!)
-      expect(@customer).not_to respond_to(:first_name_changed?)
-      expect(@customer).not_to respond_to(:lock_version)
-    end
-
-    it "delegates methods to aggregated parts" do
-      expect(@info).to respond_to(:first_name)
-      expect(@info).to respond_to(:first_name=)
-      expect(@info).to respond_to(:spec_suffix)
-      expect(@info.last_name).to eq "Smith"
-    end
-
-    it "delegates methods to representation" do
-      expect(@customer).to respond_to(:first_name)
-      expect(@customer).to respond_to(:first_name=)
-      expect(@customer).to respond_to(:spec_suffix)
-      expect(@customer.last_name).to eq "Smith"
-      expect(@customer).to respond_to(:custom_field)
-      expect(@customer).to respond_to(:custom_field=)
-    end
-
-    it "properly delegates enumerated attributes" do
-      expect(@customer).to respond_to(:spec_type)
-      expect(@customer).to respond_to(:spec_type=)
-      @customer.spec_type = :important
-      expect(@customer.spec_type === :important).to eq true
-    end
-
-    it "raises NoMethodError if unknown method is received" do
-      expect{ @customer.impossibru }.to raise_error(NoMethodError)
     end
   end
 end
