@@ -323,6 +323,19 @@ describe Moribus do
         }.to change { spec_customer_info.lock_version }.from(1).to(2)
       end
 
+      it "does not fail to update if a lock version growth is for any reason not monotonic" do
+        spec_customer_info = @customer.spec_customer_info
+
+        spec_customer_info.update_attributes(:spec_person_name_id => 3)
+        spec_customer_info.update_attributes(:spec_person_name_id => 4)
+
+        SpecCustomerInfo.where(spec_customer_id: @customer.id, lock_version: 1).delete_all
+
+        expect {
+          spec_customer_info.update_attributes(:spec_person_name_id => 5)
+        }.to change { spec_customer_info.lock_version }.from(2).to(3)
+      end
+
       it "does not fail if no locking_column is present" do
         email = SpecCustomerEmail.create(:spec_customer_id => 1, :email => "foo@bar.com")
         expect{ email.update_attributes(:email => "foo2@bar.com") }.not_to raise_error
