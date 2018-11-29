@@ -75,8 +75,20 @@ module Moribus
           result[parent_key] = read_attribute(parent_key)
           result
         end
+        relation = klass.unscoped.where(criteria)
 
-        lock_value = klass.unscoped.where(criteria).count
+        sql = <<-SQL
+          #{relation.select("COUNT(#{lock_column_name}) AS value, 0 sort_order").to_sql}
+          UNION
+          #{relation.select("MAX(#{lock_column_name}) AS value, 1 sort_order").to_sql}
+          ORDER BY sort_order
+        SQL
+
+        result = klass.connection.execute(sql)
+        current_count = result[0]["value"]
+        current_max   = result[1]["value"]
+
+        lock_value = (current_count == 0 ? 0 : current_max + 1)
 
         write_attribute(lock_column_name, lock_value)
       end

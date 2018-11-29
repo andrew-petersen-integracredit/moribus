@@ -1,26 +1,26 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Moribus::AliasAssociation do
   before do
-    class SpecPost < MoribusSpecModel(:spec_author_id => :integer, :body => :string)
-      belongs_to :spec_author   , :alias => :creator
-      has_many   :spec_comments , :alias => :remarks
-      has_one    :spec_post_info, :alias => :information
+    class SpecPost < MoribusSpecModel(spec_author_id: :integer, body: :string)
+      belongs_to :spec_author   , alias: :creator
+      has_many   :spec_comments , alias: :remarks
+      has_one    :spec_post_info, alias: :information
 
       alias_association :author   , :spec_author
       alias_association :comments , :spec_comments
       alias_association :post_info, :spec_post_info
     end
 
-    class SpecAuthor < MoribusSpecModel(:name => :string)
+    class SpecAuthor < MoribusSpecModel(name: :string)
       has_many :spec_posts
     end
 
-    class SpecPostInfo < MoribusSpecModel(:spec_post_id => :integer, :ip => :string)
-      belongs_to :spec_post, :alias => :note
+    class SpecPostInfo < MoribusSpecModel(spec_post_id: :integer, ip: :string)
+      belongs_to :spec_post, alias: :note
     end
 
-    class SpecComment < MoribusSpecModel(:spec_post_id => :integer, :body => :string)
+    class SpecComment < MoribusSpecModel(spec_post_id: :integer, body: :string)
       belongs_to :spec_post
     end
   end
@@ -30,10 +30,10 @@ describe Moribus::AliasAssociation do
   end
 
   before do
-    author = SpecAuthor.create(:name => 'John')
-    @post = author.spec_posts.create(:body => 'Post Body')
-    @post.spec_comments.create(:body => 'Fabulous!')
-    @post.create_spec_post_info(:ip => '127.0.0.1')
+    author = SpecAuthor.create(name: "John")
+    @post  = author.spec_posts.create(body: "Post Body")
+    @post.spec_comments.create(body: "Fabulous!")
+    @post.create_spec_post_info(ip: "127.0.0.1")
   end
 
   describe "reflection aliasing" do
@@ -41,7 +41,7 @@ describe Moribus::AliasAssociation do
       expect(SpecPost.reflect_on_association(:author)).not_to be_nil
     end
 
-    it "should not raise error when using aliased name in scopes" do
+    it "does not raise error when using aliased name in scopes" do
       expect{
         SpecPost.includes(:comments).first
       }.not_to raise_error
