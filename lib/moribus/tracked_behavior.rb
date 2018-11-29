@@ -88,7 +88,7 @@ module Moribus
         current_count = result[0]["value"]
         current_max   = result[1]["value"]
 
-        lock_value = (current_count == 0 ? 0 : current_max + 1)
+        lock_value = (current_count.to_s == "0" ? 0 : current_max.to_i + 1)
 
         write_attribute(lock_column_name, lock_value)
       end
