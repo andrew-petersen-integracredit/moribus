@@ -6,7 +6,7 @@ Moribus is a set of tools for managing complex graphs of ActiveRecord objects
 for which there are many inbound foreign keys, attributes and associations with
 high rates of change, and business demands for well-tracked change history.
 
-##AggregatedBehavior
+## AggregatedBehavior
 
 AggregatedBehavior implements a pattern in which an object's identity
 is modeled apart from its attributes and outbound associations. This enables
@@ -26,7 +26,7 @@ to change. This is useful for objects with many inbound foreign keys and
 high-traffic attributes/associations, such as statuses. Without this pattern
 it would be difficult to avoid many StaleObjectErrors.
 
-##TrackedBehavior
+## TrackedBehavior
 
 TrackedBehavior implements history tracking on the stack of objects
 representing the identity object's attributes and outbound associations.
@@ -36,7 +36,7 @@ and will be saved as a new record with new attribute values and the
 'is_current' column as 'true'. Thus, under the hood, new attributes
 will supersede old attributes, leaving the old record as historical.
 
-##Macros, Associations and Combination
+## Macros, Associations and Combination
 
 Despite the fact that Moribus may be used by models on its own,
 its main purpose is to be used within associations, and in conjunction
