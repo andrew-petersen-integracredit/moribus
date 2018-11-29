@@ -105,6 +105,6 @@ rake spec
 
 ## Copyright
 
-Copyright (c) 2014 HornsAndHooves.
+Copyright (c) 2014-2018 HornsAndHooves.
 
 Copyright (c) 2013 TMX Credit.
