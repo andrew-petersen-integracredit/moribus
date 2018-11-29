@@ -2,10 +2,12 @@
 module MoribusSpecModel
   def self.cleanup!
     ObjectSpace.each_object(MoribusSpecModel) do |klass|
-      if Object.const_defined? klass.name.to_sym
-        conn, table_name = klass.connection, klass.table_name
-        conn.drop_table(table_name) if conn.tables.include?(table_name)
-        Object.send :remove_const, klass.name.to_sym
+      unless klass.name.nil?
+        if Object.const_defined? klass.name.to_sym
+          conn, table_name = klass.connection, klass.table_name
+          conn.drop_table(table_name) if conn.tables.include?(table_name)
+          Object.send :remove_const, klass.name.to_sym
+        end
       end
     end
     ActiveSupport::Dependencies::Reference.clear!

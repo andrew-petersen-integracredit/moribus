@@ -46,7 +46,7 @@ Moribus	lib/moribus/extensions/has_current_extension.rb	1;"	m	line:1
 Moribus	lib/moribus/macros.rb	1;"	m	line:1
 Moribus	lib/moribus/tracked_behavior.rb	1;"	m	line:1
 Moribus	lib/moribus/version.rb	1;"	m	line:1
-MoribusSpecModel	spec/support/moribus_spec_model.rb	26;"	f	line:26
+MoribusSpecModel	spec/support/moribus_spec_model.rb	28;"	f	line:28
 MoribusSpecModel	spec/support/moribus_spec_model.rb	2;"	m	line:2
 SpecAuthor	spec/moribus/alias_association_spec.rb	15;"	c	line:15
 SpecComment	spec/moribus/alias_association_spec.rb	23;"	c	line:23
