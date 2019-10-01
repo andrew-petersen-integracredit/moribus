@@ -10,12 +10,22 @@ describe Moribus::AggregatedBehavior do
       create!(name: "jr"  , description: "Junior")
     end
 
+    class SpecTag < MoribusSpecModel()
+      has_and_belongs_to_many :person_names
+    end
+
+    class SpecPersonNamesTags < MoribusSpecModel(spec_tag_id: :integer,
+                                                 spec_person_name_id: :integer
+                                                )
+    end
+
     class SpecPersonName < MoribusSpecModel(first_name:     :string,
                                             last_name:      :string,
                                             spec_suffix_id: :integer
                                           )
       acts_as_aggregated
       has_enumerated :spec_suffix, default: ""
+      has_and_belongs_to_many :spec_tags
 
       validates_presence_of :first_name, :last_name
 
@@ -35,6 +45,12 @@ describe Moribus::AggregatedBehavior do
   end
 
   describe "Aggregated" do
+    it "supports has_and_belongs_to_many association reflections which do not have a macro" do
+      tags = [SpecTag.new, SpecTag.new]
+      name = SpecPersonName.create!(first_name: "John", last_name: "Smith", spec_tags: tags)
+      expect(name.spec_tags.size).to eq(2)
+    end
+
     context "definition" do
       it "raises an error on an unknown option" do
         expect{
