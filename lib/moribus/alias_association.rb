@@ -36,17 +36,17 @@ module Moribus
       end
 
       # Allows :alias option to alias belongs_to association
-      def belongs_to(name, scope = nil, options = {})
+      def belongs_to(name, scope = nil, **options)
         options = scope if scope.is_a?(Hash)
 
         alias_name = options.delete(:alias)
-        reflection = super(name, scope, options)
+        reflection = super(name, scope, **options)
         alias_association(alias_name, name) if alias_name
         reflection
       end
 
       # Allows :alias option to alias has_many association
-      def has_many(name, scope = nil, options = {}, &extension)
+      def has_many(name, scope = nil, **options, &extension)
         options = scope if scope.is_a?(Hash)
 
         alias_name = options.delete(:alias)
@@ -56,7 +56,7 @@ module Moribus
       end
 
       # Allows :alias option to alias has_one association
-      def has_one(name, scope = nil, options = {})
+      def has_one(name, scope = nil, **options)
         options = scope if scope.is_a?(Hash)
 
         alias_name = options.delete(:alias)

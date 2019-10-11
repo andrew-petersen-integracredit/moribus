@@ -11,14 +11,12 @@ module Moribus
         else
           # Use custom update to avoid running ActiveRecord optimistic locking
           # and to avoid updating lock_version column:
-          klass          = target.class
-          is_current_col = klass.columns.detect { |c| c.name == "is_current" }
-          id_column      = klass.columns.detect { |c| c.name == klass.primary_key }
+          klass = target.class
 
           sql =  "UPDATE #{klass.quoted_table_name} " \
-                 "SET \"is_current\" = #{klass.quote_value(false, is_current_col)} "
+                 "SET \"is_current\" = #{klass.connection.quote(false)} "
           sql << "WHERE #{klass.quoted_primary_key} = " \
-                 "#{klass.quote_value(target.send(klass.primary_key), id_column)} "
+                 "#{klass.connection.quote(target.send(klass.primary_key))} "
 
           klass.connection.update sql
         end

@@ -71,7 +71,7 @@ module Moribus
             [name, "#{name}="]
           end
           klass.define_attribute_methods
-          attribute_methods = klass.generated_attribute_methods.instance_methods.select{ |m| m !~ EXCLUDE_METHODS_REGEXP }
+          attribute_methods = klass.__send__(:generated_attribute_methods).instance_methods.select{ |m| m !~ EXCLUDE_METHODS_REGEXP }
           custom_writers = klass.instance_methods(false).map(&:to_s) & klass.column_names.map{ |name| "#{name}=" }
           (attribute_methods + enum_methods.flatten + custom_writers).map(&:to_sym)
         end
