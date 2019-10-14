@@ -24,12 +24,12 @@ module Moribus
     def association(name)
       association = super
       reflection = self.class.reflect_on_association(name)
-      case reflection.macro
-      when :belongs_to
-        association.extend(HasAggregatedExtension) if reflection.options[:aggregated]
-      when :has_one
-        association.extend(HasCurrentExtension) if reflection.options[:is_current]
-      else # do nothing
+      case reflection.try(:macro)
+        when :belongs_to
+          association.extend(HasAggregatedExtension) if reflection.options[:aggregated]
+        when :has_one
+          association.extend(HasCurrentExtension) if reflection.options[:is_current]
+        else # do nothing
       end
       association
     end
