@@ -132,5 +132,9 @@ describe Moribus::Extensions::DelegateAssociated do
     it "returns class db column if it exists" do
       expect(customer.column_for_attribute(:id)).not_to be_nil
     end
+
+    it "returns class db column if it doesn't exist" do
+      expect(customer.column_for_attribute(:foobar)).to be_nil
+    end
   end
 end

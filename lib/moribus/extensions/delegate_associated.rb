@@ -33,7 +33,7 @@ module Moribus
       # presented in Customer, the code will result in exception without
       # the following hook:
       def column_for_attribute(name)
-        unless (column = super).nil?
+        unless (column = super).nil? || column.is_a?(ActiveRecord::ConnectionAdapters::NullColumn)
           return column
         end
 

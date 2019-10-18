@@ -23,30 +23,25 @@ module Moribus
       # association-specific methods. See module description for example.
       def alias_association(alias_name, association_name)
         if reflection = reflect_on_association(association_name)
-          # Use Rails 4.1.x+ behavior, if available:
-          if ActiveRecord::Reflection.respond_to? :add_reflection then
-            ActiveRecord::Reflection.add_reflection self, alias_name, reflection
-          else
-            # Rails 4.0.x behavior:
-            reflections[alias_name] = reflections[association_name]
-          end
+          ActiveRecord::Reflection.add_reflection self, alias_name, reflection
+
           alias_association_methods(alias_name, reflection)
           reflection
         end
       end
 
       # Allows :alias option to alias belongs_to association
-      def belongs_to(name, scope = nil, options = {})
+      def belongs_to(name, scope = nil, **options)
         options = scope if scope.is_a?(Hash)
 
         alias_name = options.delete(:alias)
-        reflection = super(name, scope, options)
+        reflection = super(name, scope, **options)
         alias_association(alias_name, name) if alias_name
         reflection
       end
 
       # Allows :alias option to alias has_many association
-      def has_many(name, scope = nil, options = {}, &extension)
+      def has_many(name, scope = nil, **options, &extension)
         options = scope if scope.is_a?(Hash)
 
         alias_name = options.delete(:alias)
@@ -56,7 +51,7 @@ module Moribus
       end
 
       # Allows :alias option to alias has_one association
-      def has_one(name, scope = nil, options = {})
+      def has_one(name, scope = nil, **options)
         options = scope if scope.is_a?(Hash)
 
         alias_name = options.delete(:alias)

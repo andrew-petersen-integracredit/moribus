@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # specify any dependencies here; for example:
-  s.add_dependency "rails",      "> 4.0", "< 5"
+  s.add_dependency "rails",      "~> 5.0"
   s.add_dependency "power_enum", ">= 2.7.0"
   s.add_dependency "yard",       ">= 0"
 

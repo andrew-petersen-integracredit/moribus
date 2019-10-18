@@ -1,3 +1,3 @@
 module Moribus # :nodoc:
-  VERSION = "0.6.0" # :nodoc:
+  VERSION = "0.7.0" # :nodoc:
 end
