@@ -96,7 +96,8 @@ module Moribus
       self.id         = existing.id
       self.created_at = existing.created_at if respond_to?(:created_at)
       self.updated_at = existing.updated_at if respond_to?(:updated_at)
-      @changed_attributes = {}
+
+      clear_changes_information
     else
       restore_before_to_new_record_values
     end
@@ -145,14 +146,10 @@ module Moribus
 
     if respond_to?(:updated_at=)
       self.updated_at = nil
-      @changed_attributes =
-        ActiveSupport::HashWithIndifferentAccess.new(changed_attributes.dup.merge(updated_at: nil))
     end
 
     if respond_to?(:created_at=)
       self.created_at = nil
-      @changed_attributes =
-        ActiveSupport::HashWithIndifferentAccess.new(changed_attributes.dup.merge(created_at: nil))
     end
 
     # mark all other attributes is changing
