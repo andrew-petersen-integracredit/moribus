@@ -100,6 +100,9 @@ module Moribus
       clear_changes_information
     else
       restore_before_to_new_record_values
+
+      clear_attribute_change(:created_at) if respond_to?(:created_at)
+      clear_attribute_change(:updated_at) if respond_to?(:updated_at)
     end
     @new_record = false
     true
@@ -146,10 +149,12 @@ module Moribus
 
     if respond_to?(:updated_at=)
       self.updated_at = nil
+      self.updated_at_will_change!
     end
 
     if respond_to?(:created_at=)
       self.created_at = nil
+      self.created_at_will_change!
     end
 
     # mark all other attributes is changing
