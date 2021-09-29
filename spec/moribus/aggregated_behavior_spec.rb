@@ -93,7 +93,7 @@ describe Moribus::AggregatedBehavior do
 
     it "looks up self and replaces id with existing on update" do
       name = SpecPersonName.create first_name: "Alice", last_name: "Smith"
-      name.update_attributes first_name: "John"
+      name.update! first_name: "John"
       expect(name.id).to eq @existing.id
     end
 

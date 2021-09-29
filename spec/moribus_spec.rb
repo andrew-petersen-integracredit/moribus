@@ -128,7 +128,7 @@ describe Moribus do
 
       suppress(Exception) do
         expect {
-          @info.update_attributes spec_customer_id: nil, spec_person_name_id: 2
+          @info.update! spec_customer_id: nil, spec_person_name_id: 2
         }.not_to change(SpecCustomerInfo, :count)
       end
 
@@ -155,25 +155,25 @@ describe Moribus do
 
     it "creates a new current record if updated" do
       expect {
-        @info.update_attributes(spec_person_name_id: 2)
+        @info.update!(spec_person_name_id: 2)
       }.to change(SpecCustomerInfo, :count).by(1)
     end
 
     it "replaces itself with new id" do
       old_id = @info.id
-      @info.update_attributes(spec_person_name_id: 2)
+      @info.update!(spec_person_name_id: 2)
       expect(@info.id).not_to eq old_id
     end
 
     it "sets is_current record to false for superseded record" do
       old_id = @info.id
-      @info.update_attributes(spec_person_name_id: 2)
+      @info.update!(spec_person_name_id: 2)
       expect(SpecCustomerInfo.find(old_id).is_current).to eq false
     end
 
     it "sets previous_id to the id of the previous record" do
       old_id = @info.id
-      @info.update_attributes(spec_person_name_id: 2)
+      @info.update!(spec_person_name_id: 2)
       expect(@info.previous_id).to eq old_id
     end
 
@@ -191,7 +191,7 @@ describe Moribus do
                                         status:        "unverified",
                                         is_current:    true
                                       )
-      expect{ email.update_attributes(status: "verified") }.not_to raise_error
+      expect{ email.update!(status: "verified") }.not_to raise_error
     end
 
     describe "updated_at and created_at" do
@@ -221,9 +221,9 @@ describe Moribus do
       end
 
       it "raises a stale object error" do
-        @info1.update_attributes(spec_person_name_id: 3)
+        @info1.update!(spec_person_name_id: 3)
 
-        expect{ @info2.update_attributes(spec_person_name_id: 4) }.
+        expect{ @info2.update!(spec_person_name_id: 4) }.
           to raise_error(ActiveRecord::StaleObjectError,
                          /Attempted to update_current \(version #{@info2.lock_version}\) a stale object: SpecCustomerInfo\./)
       end
@@ -232,30 +232,30 @@ describe Moribus do
         spec_customer_info = @customer.spec_customer_info
 
         expect {
-          spec_customer_info.update_attributes(spec_person_name_id: 3)
+          spec_customer_info.update!(spec_person_name_id: 3)
         }.to change { spec_customer_info.lock_version }.from(0).to(1)
 
         expect {
-          spec_customer_info.update_attributes(spec_person_name_id: 4)
+          spec_customer_info.update!(spec_person_name_id: 4)
         }.to change { spec_customer_info.lock_version }.from(1).to(2)
       end
 
       it "does not fail to update if a lock version growth is for any reason not monotonic" do
         spec_customer_info = @customer.spec_customer_info
 
-        spec_customer_info.update_attributes(spec_person_name_id: 3)
-        spec_customer_info.update_attributes(spec_person_name_id: 4)
+        spec_customer_info.update!(spec_person_name_id: 3)
+        spec_customer_info.update!(spec_person_name_id: 4)
 
         SpecCustomerInfo.where(spec_customer_id: @customer.id, lock_version: 1).delete_all
 
         expect {
-          spec_customer_info.update_attributes(spec_person_name_id: 5)
+          spec_customer_info.update!(spec_person_name_id: 5)
         }.to change { spec_customer_info.lock_version }.from(2).to(3)
       end
 
       it "does not fail if no locking_column is present" do
         email = SpecCustomerEmail.create(spec_customer_id: 1, email: "foo@bar.com")
-        expect{ email.update_attributes(email: "foo2@bar.com") }.not_to raise_error
+        expect{ email.update!(email: "foo2@bar.com") }.not_to raise_error
       end
 
       it "updates lock_version column based on parent relation" do
@@ -263,11 +263,11 @@ describe Moribus do
         spec_customer_info = @customer.spec_customer_info
 
         expect {
-          spec_customer_info.update_attributes(spec_person_name_id: 3)
+          spec_customer_info.update!(spec_person_name_id: 3)
         }.to change { spec_customer_info.lock_version }.from(0).to(1)
 
         expect {
-          spec_customer_info.update_attributes(spec_customer: @other_customer)
+          spec_customer_info.update!(spec_customer: @other_customer)
         }.to change { spec_customer_info.lock_version }.from(1).to(0)
       end
 
@@ -282,10 +282,10 @@ describe Moribus do
 
         expect( other_info_with_type.lock_version ).to eq 0
 
-        info_with_type.update_attributes(spec_status: :active)
+        info_with_type.update!(spec_status: :active)
         expect( info_with_type.lock_version ).to eq 1
 
-        info_with_type.update_attributes(spec_status: :inactive)
+        info_with_type.update!(spec_status: :inactive)
         expect( info_with_type.lock_version ).to eq 2
 
         expect( other_info_with_type.lock_version ).to eq 0

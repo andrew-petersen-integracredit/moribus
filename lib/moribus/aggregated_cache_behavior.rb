@@ -31,7 +31,7 @@ module Moribus
       class_attribute :aggregated_records_cache
       self.aggregated_records_cache = {}
 
-      after_save :cache_aggregated_record, :on => :create
+      after_commit :cache_aggregated_record, :on => :create
     end
 
     # Class methods for model that includes AggregatedCacheBehavior
