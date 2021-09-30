@@ -20,12 +20,12 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # specify any dependencies here; for example:
-  s.add_dependency "rails",      "~> 5"
+  s.add_dependency "rails",      "~> 6"
   s.add_dependency "power_enum", ">= 2.7.0"
   s.add_dependency "yard",       ">= 0"
 
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rspec-rails"
-  s.add_development_dependency "sqlite3", "~> 1.3.6"
+  s.add_development_dependency "sqlite3"
 end
