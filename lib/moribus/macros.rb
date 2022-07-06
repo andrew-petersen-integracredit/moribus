@@ -91,7 +91,7 @@ module Moribus
         scope = current_scope
       end
 
-      reflection = has_one(name, scope, options)
+      reflection = has_one(name, scope, **options)
       reflection = normalize_reflection(reflection, name)
       reflection.options[:is_current] = true
       accepts_nested_attributes_for name
@@ -106,7 +106,7 @@ module Moribus
     # by special aggregated functionality (attribute delegation. See
     # Extensions::HasAggregatedExtension)
     def has_aggregated(name, options = {})
-      reflection = belongs_to(name, options)
+      reflection = belongs_to(name, **options)
       reflection = normalize_reflection(reflection, name)
       reflection.options[:aggregated] = true
       accepts_nested_attributes_for name

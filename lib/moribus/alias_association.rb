@@ -45,7 +45,7 @@ module Moribus
         options = scope if scope.is_a?(Hash)
 
         alias_name = options.delete(:alias)
-        reflection = super(name, scope, options, &extension)
+        reflection = super(name, scope, **options, &extension)
         alias_association(alias_name, name) if alias_name
         reflection
       end
@@ -55,7 +55,7 @@ module Moribus
         options = scope if scope.is_a?(Hash)
 
         alias_name = options.delete(:alias)
-        reflection = super(name, scope, options)
+        reflection = super(name, scope, **options)
         alias_association(alias_name, name) if alias_name
         reflection
       end
