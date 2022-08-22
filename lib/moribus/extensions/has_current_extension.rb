@@ -26,6 +26,9 @@ module Moribus
         end
       end
 
+      # Is the record has a column with name `updated_at`
+      #
+      # @return [Boolean]
       private def has_updated_at_column?
         target.class.column_names.include?("updated_at")
       end

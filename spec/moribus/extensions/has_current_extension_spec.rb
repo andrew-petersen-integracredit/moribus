@@ -38,7 +38,7 @@ describe Moribus::Extensions::HasCurrentExtension do
       it "sets 'is_current' flag of overridden record to false for new record" do
         old_info = customer.spec_customer_info
         customer.spec_customer_info = SpecCustomerInfo.new
-        expect(old_info.is_current).to be_falsey
+        expect(old_info.is_current).to be false
       end
 
       it "sets 'is_current' flag updates updated_at column" do
