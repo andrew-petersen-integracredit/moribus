@@ -30,7 +30,7 @@ describe Moribus do
                                             middle_name:    :string,
                                             last_name:      :string,
                                             spec_suffix_id: :integer
-    )
+                                          )
       acts_as_aggregated non_content_columns: :middle_name
       has_enumerated :spec_suffix, default: ""
 
@@ -47,16 +47,16 @@ describe Moribus do
     end
 
     class SpecCustomerInfo < MoribusSpecModel(
-      spec_customer_id:    :integer!,
-      spec_person_name_id: :integer,
-      spec_status_id:      :integer,
-      spec_type_id:        :integer,
-      is_current:          :boolean,
-      lock_version:        :integer,
-      created_at:          :datetime,
-      updated_at:          :datetime,
-      previous_id:         :integer
-    )
+                                        spec_customer_id:    :integer!,
+                                        spec_person_name_id: :integer,
+                                        spec_status_id:      :integer,
+                                        spec_type_id:        :integer,
+                                        is_current:          :boolean,
+                                        lock_version:        :integer,
+                                        created_at:          :datetime,
+                                        updated_at:          :datetime,
+                                        previous_id:         :integer
+                              )
       attr :custom_field
 
       belongs_to :spec_customer, inverse_of: :spec_customer_info, touch: true
@@ -68,14 +68,14 @@ describe Moribus do
     end
 
     class SpecCustomerInfoWithType < MoribusSpecModel(
-      spec_customer_id: :integer!,
-      spec_status_id:   :integer,
-      spec_type_id:     :integer,
-      is_current:       :boolean,
-      lock_version:     :integer,
-      created_at:       :datetime,
-      updated_at:       :datetime
-    )
+                                        spec_customer_id: :integer!,
+                                        spec_status_id:   :integer,
+                                        spec_type_id:     :integer,
+                                        is_current:       :boolean,
+                                        lock_version:     :integer,
+                                        created_at:       :datetime,
+                                        updated_at:       :datetime
+                                      )
       attr :custom_field
 
       belongs_to :spec_customer, inverse_of: :spec_customer_info_with_type, touch: true
@@ -97,7 +97,7 @@ describe Moribus do
                                                email:            :string,
                                                is_current:       :boolean,
                                                status:           :string
-    )
+                                              )
       connection.add_index table_name, [:email, :is_current], unique: true
 
       belongs_to :spec_customer
@@ -190,7 +190,7 @@ describe Moribus do
                                         email:         "foo@bar.com",
                                         status:        "unverified",
                                         is_current:    true
-      )
+                                      )
       expect{ email.update!(status: "verified") }.not_to raise_error
     end
 
